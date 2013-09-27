@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 店铺列表页面 ShopListActivity 布局 -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:id="@+id/activity_shoplist_layout"
+    android:background="#FFFFFF"
+>
+
+    <!-- 最顶部的 回退键 和  title标题 -->
+	<RelativeLayout
+        android:id="@+id/activity_shoplist_layout_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_title_layout_bg"
+        android:gravity="center"
+     >
+
+        <ImageButton
+            android:id="@+id/activity_shoplist_layout_title_layout_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/icon_back"
+         />
+
+        <TextView
+            android:id="@+id/activity_shoplist_layout_title_layout_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_activity_shoplist_layout_title_layout_textview"
+			android:textColor="#FFFFFF"            
+			android:textSize="26sp"
+			android:gravity="center"
+            android:layout_toRightOf="@id/activity_about_layout_title_layout_btn_back"
+          />
+    </RelativeLayout>	
+    
+	<!-- 搜索栏（搜索类别、搜索输入框、搜索按钮） -->
+	 <LinearLayout
+        android:id="@+id/activity_shoplist_layout_search_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_shoplist_layout_title_layout"
+        android:background="@drawable/activity_shoplist_layout_search_layout_bg"
+        android:padding="5dp" 
+        android:layout_centerHorizontal="true">
+        
+        <!-- 默认按钮显示”全部“ -->
+        <Button
+            android:id="@+id/activity_shoplist_layout_search_layout_btn_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip"
+            android:layout_gravity="center"
+            android:background="@drawable/activity_shoplist_layout_search_layout_btn_category"
+            android:text="@string/activity_shoplist_layout_search_layout_btn_category_all" 
+         />
+
+        <EditText
+            android:id="@+id/activity_shoplist_layout_search_layout_edittext_input"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:hint="@string/activity_shoplist_layout_search_layout_edittext_input_hint"
+            android:singleLine="true"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            android:background="@drawable/activity_shoplist_layout_search_layout_edittext_input" 
+            >
+			<requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/activity_shoplist_layout_search_layout_btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            android:background="@drawable/activity_shoplist_layout_search_layout_btn_search" 
+        />
+
+    </LinearLayout>
+    
+	 
+	 <!-- 搜索中 店铺 列表 -->
+    <ListView
+        android:id="@+id/activity_shoplist_layout_listview_shop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_shoplist_layout_search_layout"
+        android:cacheColorHint="#00000000" >
+    </ListView>
+
+    <!-- 搜索中 类别 列表  这个布局一定得放在“搜索后店铺列表”后面，不然显示出来却获得不了焦点  -->
+    <ListView
+        android:id="@+id/activity_shoplist_layout_listview_category"
+        android:layout_width="100dip"
+        android:layout_height="300dip"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/activity_shoplist_layout_search_layout"
+        android:layout_marginLeft="10dp"
+        android:background="#F0FFFF"
+        android:cacheColorHint="#00000000"
+        android:visibility="gone" />
+    
+
+</RelativeLayout>

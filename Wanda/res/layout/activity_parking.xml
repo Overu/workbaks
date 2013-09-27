@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 停车位页面 ParkingActivity 布局 -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:id="@+id/activity_parking_layout"
+    android:background="@drawable/activity_about_bg"
+>
+    <!-- 最顶部的 回退键 和  title标题 -->
+	<RelativeLayout
+        android:id="@+id/activity_parking_layout_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_title_layout_bg"
+        android:gravity="center"
+     >
+
+        <ImageButton
+            android:id="@+id/activity_parking_layout_title_layout_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/icon_back"
+         />
+
+        <TextView
+            android:id="@+id/activity_parking_layout_title_layout_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_activity_parking_layout_title_layout_textview"
+			android:textColor="#FFFFFF"            
+			android:textSize="26sp"
+			android:gravity="center"
+            android:layout_toRightOf="@id/activity_parking_layout_title_layout_btn_back"
+            
+          />
+    </RelativeLayout>
+    
+	<TextView 
+	    android:id="@+id/activity_parking_layout_record_tip"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="请点击下面按钮记录您的停车位置"
+	    android:textColor="#000000"            
+	    android:textSize="20sp"
+		android:gravity="center"
+		android:layout_centerInParent="true"
+	    android:layout_below="@id/activity_parking_layout_title_layout"
+	    android:layout_margin="10dp"
+	/>
+	
+	
+	<Button 
+	    android:id="@+id/activity_parking_layout_record_btn"
+	    android:layout_width="80dp"
+	    android:layout_height="80dp"
+	    android:layout_below="@id/activity_parking_layout_record_tip"
+	    android:background="@drawable/app_logo"
+	    android:gravity="center"
+	    android:layout_centerInParent="true"
+	    android:layout_margin="20dp"
+	 />
+	
+	<TextView 
+	    android:id="@+id/activity_parking_layout_record_record"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="#000000"            
+	    android:textSize="20sp"
+		android:gravity="center"
+		android:layout_centerInParent="true"
+	    android:layout_below="@id/activity_parking_layout_record_btn"
+	    android:layout_margin="10dp"
+	    android:visibility="invisible"
+	 />
+	
+	<Button 
+	 	android:id="@+id/activity_parking_layout_navigate_btn"   
+	 	android:layout_width="80dp"
+	 	android:layout_height="80dp"
+	 	android:layout_below="@id/activity_parking_layout_record_record"
+	    android:background="@drawable/activity_parking_layout_navigate_btn"
+	    android:gravity="center"
+	    android:layout_centerInParent="true"
+	    android:layout_margin="20dp"
+	    android:visibility="invisible"
+	 />
+
+</RelativeLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 启动页面 LaunchActivity 布局 -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_launch_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="#00000000"
+    >
+    <!-- 启动页面的图片 
+    		android:scaleType是控制图片如何resized/moved来匹对ImageView的size。
+    		fitXY:把图片不按比例扩大/缩小到View的大小显示
+    -->
+    <ImageView 
+        android:id="@+id/activity_launch_layout_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:scaleType="fitXY"
+        android:background="@drawable/launcher_activity_bg"
+        />
+    
+</RelativeLayout>

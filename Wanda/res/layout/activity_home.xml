@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 主页面 HomeActivity 布局 -->
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@drawable/activity_home_bg"
+    >
+    
+    <!-- 主页面 HomeActivity 顶部title的布局（title文字和关于按钮） -->
+    <RelativeLayout 
+        android:id="@+id/activity_home_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_home_title_layout_bg"
+        >
+        <TextView 
+         	android:id="@+id/acitivity_home_title_layout_textview"   
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:text="@string/string_activity_home_title_layout_textview"
+         />
+        
+        <ImageButton 
+            android:id="@+id/acitivity_home_title_layout_btn_about"
+			android:background="@drawable/activity_home_title_layout_btn_about"            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:layout_alignRight="@id/acitivity_home_title_layout_textview"
+            android:layout_margin="10dp"
+            />
+    </RelativeLayout>
+    
+    <!-- 主页面 HomeActivity  中右边三个按钮（地图、列表、停车） -->
+    <LinearLayout 
+     	android:id="@+id/activity_home_rightbtns_layout" 
+     	android:layout_width="wrap_content"
+     	android:layout_height="wrap_content"
+     	android:layout_alignParentRight="true"
+     	android:layout_marginTop="70dp"
+     	android:layout_below="@id/activity_home_title_layout"
+        android:orientation="vertical"
+        android:background="@drawable/activity_home_rightbtns_layout_bg"
+     >
+        <Button 
+            android:id="@+id/activity_home_rightbtns_layout_btn_map"
+            android:drawableTop="@drawable/activity_home_rightbtns_layout_btn_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:layout_weight="1"
+            android:text="@string/string_activity_home_rightbtns_layout_btn_map"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+         />
+        
+        
+        <Button 
+            android:id="@+id/activity_home_rightbtns_layout_btn_shoplist"
+            android:drawableTop="@drawable/activity_home_rightbtns_layout_btn_shoplist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:layout_weight="1"
+            android:text="@string/string_activity_home_rightbtns_layout_btn_shoplist"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+         />
+        
+        
+        <Button 
+            android:id="@+id/activity_home_rightbtns_layout_btn_parking"
+            android:drawableTop="@drawable/activity_home_rightbtns_layout_btn_parking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:layout_weight="1"
+            android:text="@string/string_activity_home_rightbtns_layout_btn_parking"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+         />
+        
+    </LinearLayout>
+    
+    
+     <!-- 主页面 HomeActivity 中下部 滚动 文字 -->
+
+    <LinearLayout
+        android:id="@+id/activity_home_bottom_roller_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/activity_home_bottom_logo_layout"
+        android:background="#00000000"
+        android:orientation="horizontal"
+        >
+        <!--
+        	1，android:ellipsize="marquee" 跑马灯显示
+        	2，<requestFocus/> 
+        		 标签用于指定屏幕内的焦点View。
+				 例如我们点击tab键或enter键焦点自动进入下一个输入框
+				 用法: 将标签置于Views标签内部
+			3，设置是否获得焦点。若有requestFocus()被调用时，后者优先处理。
+				 注意在表单中想设置某一个如EditText获取焦点，光设置这个是不行的，需要将这个EditText前面的focusable都设置为false才行。
+				 在Touch模式下获取焦点需要设置focusableInTouchMode为true。 
+        	4，android:freezesText="true"  设置保存文本的内容以及光标的位置。
+        	5，android:marqueeRepeatLimit="marquee_forever"
+        		 在ellipsize指定marquee的情况下，设置重复滚动的次数，当设置为marquee_forever时表示无限次。
+        	6， android:selectAllOnFocus="true"
+        	     如果文本是可选择的，让他获取焦点而不是将光标移动为文本的开始位置或者末尾位置，EditText中设置后无效果。 -->
+
+        <TextView
+            android:id="@+id/activity_home_bottom_roller_layout_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:padding="6dip"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="@string/string_activity_home_bottom_roller_layout_textview"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <requestFocus />
+    </LinearLayout>
+
+    <!--主页面 HomeActivity 中底部的 4个小图标 加 一个箭头图标（品牌墙） -->
+
+    <LinearLayout
+        android:id="@+id/activity_home_bottom_logo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical" >
+
+        <!-- 如果给这4个设置width、height会挤占出屏幕 -->
+        <ImageButton
+            android:id="@+id/activity_home_bottom_logo_layout_btn_logo_1"
+            android:background="@drawable/activity_home_bottom_logo_layout_btn_logo_1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+         />
+
+        <ImageButton
+            android:id="@+id/activity_home_bottom_logo_layout_btn_logo_2"
+            android:background="@drawable/activity_home_bottom_logo_layout_btn_logo_2" 
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+        />
+
+        <ImageButton
+            android:id="@+id/activity_home_bottom_logo_layout_btn_logo_3"
+            android:background="@drawable/activity_home_bottom_logo_layout_btn_logo_3"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+        />
+
+        <ImageButton
+            android:id="@+id/activity_home_bottom_logo_layout_btn_logo_4"
+            android:background="@drawable/activity_home_bottom_logo_layout_btn_logo_4" 
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+        />
+
+        <!--
+        	针对ImageView来说：
+			两者都可以设置ImageView的背景。
+			android:src设置：在设置ImageView的setAlpha()时有效果。
+			android:background设置：在设置ImageView的setAlpha()时无效果。
+			？？？？？-->
+
+        <ImageButton
+            android:id="@+id/activity_home_bottom_logo_layout_btn_logo_more"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:background="@drawable/activity_home_bottom_logo_layout_btn_logo_more"
+        />
+    </LinearLayout>
+    
+</RelativeLayout>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 地图页面 MapActivity 布局 -->
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:id="@+id/activity_map_layout"
+    android:background="@drawable/activity_about_bg"
+    
+    android:overScrollMode="always"
+    android:padding="0dp"
+    android:splitMotionEvents="true"
+>
+	<!-- 最顶部的 回退键 和  title标题 -->
+	<RelativeLayout
+        android:id="@+id/activity_map_layout_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_title_layout_bg"
+        android:gravity="center"
+     >
+
+        <ImageButton
+            android:id="@+id/activity_map_layout_title_layout_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/icon_back"
+         />
+
+        <TextView
+            android:id="@+id/activity_map_layout_title_layout_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_activity_map_layout_title_layout_textview"
+			android:textColor="#FFFFFF"            
+			android:textSize="26sp"
+			android:gravity="center"
+            android:layout_toRightOf="@id/activity_map_layout_title_layout_btn_back"
+            
+          />
+    </RelativeLayout>
+    
+	<com.macrowen.macromap.draw.MacroMap
+        android:id="@+id/macroMap1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:padding="0dp" />
+<!-- 	<com.macrowen.macromap.MacroMap
+        android:id="@+id/macroMap1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:padding="0dp" /> -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/button_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/shop_detail_margin"
+            android:background="@android:color/transparent"
+            android:src="@drawable/position" />
+
+        <TextView
+            android:id="@+id/path"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/button_zoomout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/shop_detail_margin"
+            android:background="@android:color/transparent"
+            android:src="@drawable/zoom_out" />
+
+        <ImageButton
+            android:id="@+id/button_zoomin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/shop_detail_margin"
+            android:background="@android:color/transparent"
+            android:src="@drawable/zoom_in" />
+    </LinearLayout>
+
+
+</RelativeLayout>

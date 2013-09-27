@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 品牌墙页面 BrandWallActivity 布局 -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:id="@+id/activity_brandwall_layout"
+    android:background="@drawable/activity_about_bg"
+>
+    
+    <!-- 最顶部的 回退键 和  title标题 -->
+	<RelativeLayout
+        android:id="@+id/activity_brandwall_layout_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_title_layout_bg"
+        android:gravity="center"
+     >
+
+        <ImageButton
+            android:id="@+id/activity_brandwall_layout_title_layout_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/icon_back"
+         />
+
+        <TextView
+            android:id="@+id/activity_brandwall_layout_title_layout_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_activity_brandwall_layout_title_layout_textview"
+			android:textColor="#FFFFFF"            
+			android:textSize="26sp"
+			android:gravity="center"
+            android:layout_toRightOf="@id/activity_brandwall_layout_title_layout_btn_back"
+            
+          />
+    </RelativeLayout>
+    
+    <!-- 品牌墙展示 -->
+    <GridView 
+        android:id="@+id/activity_brandwall_layout_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_brandwall_layout_title_layout"
+        android:numColumns="4"
+    >
+        
+    </GridView>
+
+</RelativeLayout>
