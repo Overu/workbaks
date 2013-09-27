@@ -33,9 +33,6 @@ public class Shop extends DrawMap {
 
   @Override
   public void onDraw(Canvas canvas) {
-    onDrawBlock(canvas);
-    // onDrawLine(canvas);
-    onDrawText(canvas);
   }
 
   @Override

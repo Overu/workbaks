@@ -16,7 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 
-@SuppressLint("DrawAllocation")
+@SuppressLint({ "DrawAllocation", "WrongCall" })
 public class Map extends DrawMap {
 
   private HashMap<String, Floor> floors;
@@ -24,7 +24,7 @@ public class Map extends DrawMap {
   private Floor mCurFloor;
   private JSONArray mJson;
 
-  private Bitmap mMapBitmap;
+  // private Bitmap mMapBitmap;
   private Bitmap mBmp;
 
   public Map() {
@@ -53,15 +53,15 @@ public class Map extends DrawMap {
   }
 
   @Override
-  public void onDraw(Canvas canvas) {
-    Floor mFloor = this.getCurFloor();
+  public void onDraw(final Canvas canvas) {
+    final Floor mFloor = this.getCurFloor();
     if (mFloor == null) {
       return;
     }
     Paint paint = new Paint();
     if (mRedraw) {
       mRedraw = false;
-      // paint.setColor(Color.WHITE);
+      paint.setColor(Color.WHITE);
       mBmp = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       Canvas cc = new Canvas(mBmp);
       cc.drawPaint(paint);
@@ -69,14 +69,14 @@ public class Map extends DrawMap {
       float scale = mFloor.mScale;
       mFloor.mDrawType = DrawType.Draw;
       mFloor.mScale = scale / 2;
-      mFloor.onDraw(cc);
+      // mFloor.onDraw(cc);
       mFloor.mScale = scale;
       mFloor.mDrawType = DrawType.Draw;
-      mMapBitmap = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
-      Canvas c = new Canvas(mMapBitmap);
+      mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+      final Canvas c = new Canvas(mainLayer);
       c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
       mFloor.onDraw(c);
-      canvas.drawBitmap(mMapBitmap, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
+      canvas.drawBitmap(mainLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
       mFloor.mLastScale = mFloor.mScale;
       mFloor.mLastOffset = new PointF(mFloor.mOffset.x, mFloor.mOffset.y);
     } else {
@@ -105,7 +105,7 @@ public class Map extends DrawMap {
       RectF rectf =
           new RectF(x, y, x + delegate.getWidth() * 5 / 3 * mFloor.mScale / mFloor.mLastScale - 2 * w * mFloor.mScale, y
               + delegate.getHeight() * 5 / 3 * mFloor.mScale / mFloor.mLastScale - 2 * w * mFloor.mScale);
-      canvas.drawBitmap(mMapBitmap, rect, rectf, paint);
+      canvas.drawBitmap(mainLayer, rect, rectf, paint);
     }
   }
 

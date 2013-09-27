@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -50,29 +53,34 @@ public class Floor extends DrawMap {
   public void onDraw(Canvas canvas) {
     Paint paint = new Paint();
     paint.setColor(Color.WHITE);
+    floorLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    Canvas c = new Canvas(floorLayer);
+    c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
     canvas.drawPaint(paint);
-    this.drawFloor(canvas);
+    this.drawFloor(c);
+    canvas.drawBitmap(floorLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
 
-    List<DrawMap> units = new ArrayList<DrawMap>();
+    shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    Canvas shopCanvas = new Canvas(shopLayer);
+    shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+
+    textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    Canvas textCanvas = new Canvas(textLayer);
+    textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
 
     for (Entry<PointF, Shop> entry : mShops.entrySet()) {
-      units.add(entry.getValue());
-    }
-    int i = 0;
-    for (DrawMap drawMap : units) {
+      Shop value = entry.getValue();
       if (mDrawType == DrawType.Draw) {
-        drawMap.mDrawType = DrawType.Draw;
+        value.mDrawType = DrawType.Draw;
       }
-      if (i == 0) {
-        Log.e("aaaaaaaaaaaa", drawMap.mDisplay);
-      }
-      // if (i == 200) {
-      // break;
-      // }
-      i++;
-      this.support(drawMap);
-      drawMap.onDraw(canvas);
+      this.support(value);
+      value.onDrawBlock(shopCanvas);
+      value.onDrawLine(textCanvas);
+      value.onDrawText(textCanvas);
     }
+
+    canvas.drawBitmap(shopLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
+    canvas.drawBitmap(textLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
   }
 
   @Override

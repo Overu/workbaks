@@ -1,11 +1,13 @@
 package com.macrowen.macromap.draw;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
+
+import android.graphics.Bitmap.Config;
 
 import android.graphics.Typeface;
 import android.graphics.Paint.Align;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -26,6 +28,11 @@ public class DrawMap {
   public static Paint mPaintBlock = new Paint();
   public static Paint mPaintLine = new Paint();
   public static Paint mPaintText = new Paint();
+
+  protected static Bitmap mainLayer;
+  protected static Bitmap floorLayer;
+  protected static Bitmap shopLayer;
+  protected static Bitmap textLayer;
 
   private String mId;
   private String mName;
@@ -495,6 +502,13 @@ public class DrawMap {
       return true;
     }
     return Math.abs((b + a) / (b - a)) > 5;
+  }
+
+  protected Canvas genLayer(Bitmap bitmap) {
+    bitmap = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    Canvas c = new Canvas(bitmap);
+    c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    return c;
   }
 
   protected void support(DrawMap drawMap) {
