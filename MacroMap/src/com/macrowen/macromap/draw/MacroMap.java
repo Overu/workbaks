@@ -3,6 +3,9 @@ package com.macrowen.macromap.draw;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+
+import android.graphics.Typeface;
 
 import android.view.MotionEvent;
 
@@ -46,6 +49,8 @@ public class MacroMap extends ScrollView {
   private float mLastScale;
   private float mLastX;
   private float mLastY;
+
+  Typeface mTypeface = Typeface.createFromAsset(getContext().getAssets(), "PalmapPublic.ttf");
 
   public MacroMap(Context context) {
     super(context);
@@ -140,7 +145,7 @@ public class MacroMap extends ScrollView {
   public void setFloor(String floorId) {
     mMap.setCurFloor(floorId);
     Floor floor = mMap.getCurFloor();
-    if (floor.getJson() != null) {
+    if (floor.getInitJson() != null) {
       return;
     }
     loadFloorFile(floor.getId());
@@ -182,6 +187,27 @@ public class MacroMap extends ScrollView {
   }
 
   private void init(AttributeSet attrs, int defStyle) {
+    HashMap<String, String> publicServiceIcons = DrawMap.mPublicServiceIcons;
+    for (int i = 0; i < 100; i++) {
+      // mPublicServiceIcons.put(9100 + i, "" + (char) i);
+      publicServiceIcons.put((9100 + i) + "", "" + (char) (i + 20));
+      // logd("key=" + (9100 + i) + ", value=" + ((char) i) + "," + ("" +
+      // (char) i));
+    }
+    publicServiceIcons.put("27108", "%"); // 洗手间
+    publicServiceIcons.put("27125", "#"); // 扶梯
+    publicServiceIcons.put("27124", "$"); // 楼梯
+    publicServiceIcons.put("25135", "#"); // 扶梯
+    publicServiceIcons.put("25136", "$"); // 楼梯
+    publicServiceIcons.put("27126", "\""); // 电梯
+    publicServiceIcons.put("27052", "'"); // 出入口
+    publicServiceIcons.put("27114", "y"); // 自动售货机
+    publicServiceIcons.put("27010", "("); // ATM
+    publicServiceIcons.put("27066", "-");
+    publicServiceIcons.put("27096", "{");
+    publicServiceIcons.put("27055", "{"); // 问讯处
+
+    DrawMap.mTypeface = mTypeface;
     downLoad = new DownLoad(mHandler);
   }
 
@@ -220,7 +246,7 @@ public class MacroMap extends ScrollView {
     try {
       String json = EncodingUtils.getString(getByte(file), "UTF-8");
       JSONObject obj = new JSONObject(json);
-      mMap.getCurFloor().setJson(obj);
+      mMap.getCurFloor().setInitJson(obj);
       mMap.getCurFloor().addScale(1);
       mMap.reDraw();
       // dataReady = true;

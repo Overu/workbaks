@@ -6,11 +6,9 @@ import android.graphics.Canvas;
 
 import android.graphics.Color;
 
-public class Shop extends DrawMap {
+public class Shop extends DrawLayer {
 
-  private String mType;
-
-  private JSONArray mJson;
+  private Canvas canvas;
 
   public Shop() {
     setName(mDisplay);
@@ -21,18 +19,6 @@ public class Shop extends DrawMap {
             + (int) Math.round(Math.random() * 32 + 224) * 256 * 256 + (int) Math.round(Math.random() * 32 + 224) * 256 * 256 * 256;
     mTextColor = Color.BLACK;
     mBorderSize = 1;
-  }
-
-  public JSONArray getJson() {
-    return mJson;
-  }
-
-  public String getType() {
-    return mType;
-  }
-
-  @Override
-  public void onDraw(Canvas canvas) {
   }
 
   @Override
@@ -46,12 +32,10 @@ public class Shop extends DrawMap {
     setId(String.valueOf(jsonArray.optInt(4)));
   }
 
+  @Override
   public void setJson(JSONArray json) {
     this.mJson = json;
-    this.callPath(json);
+    super.setJson(mJson);
   }
 
-  public void setType(String type) {
-    this.mType = type;
-  }
 }
