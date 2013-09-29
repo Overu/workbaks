@@ -50,7 +50,6 @@ public class DrawMap<T> {
   public Path mDrawPath;
   public Path mDrawTextPath;
   public Region mBlockRegion;
-  public Region mTextRegion;
   public PointF mStart;
   public RectF mRect;
   public RectF mBorder = null;

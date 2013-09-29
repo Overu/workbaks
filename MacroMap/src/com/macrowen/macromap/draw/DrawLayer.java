@@ -352,7 +352,7 @@ public class DrawLayer<T> extends DrawMap<T> {
         r = rg.getBounds();
         // logd("" + rect + r);
         rect = r;
-        region = mTextRegion;
+        region = rg;
         w = (rect.width() > rect.height() * 0.8) ? rect.width() : rect.height();
         width = paint.measureText(mDisplay);
         if (width > w) {
