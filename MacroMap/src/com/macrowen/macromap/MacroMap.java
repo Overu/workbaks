@@ -1,5 +1,6 @@
 package com.macrowen.macromap;
 
+import com.macrowen.macromap.draw.DownLoad;
 import com.macrowen.macromap.draw.DrawMap;
 import com.macrowen.macromap.draw.Floor;
 import com.macrowen.macromap.draw.Map;
@@ -9,6 +10,7 @@ import com.macrowen.macromap.draw.ShopPosition;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -16,10 +18,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import android.os.Message;
+
 import android.graphics.drawable.Drawable;
 
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -45,6 +50,20 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 
 public class MacroMap extends ScrollView {
+
+  public class A {
+    File mFile;
+    String mFloorid;
+    String mMallid;
+
+    public A(File mFile, String mFloorid, String mMallid) {
+      super();
+      this.mFile = mFile;
+      this.mFloorid = mFloorid;
+      this.mMallid = mMallid;
+    }
+
+  }
 
   public interface OnMapEventListener {
     public void OnMapEvent(int id, OnMapEventType type);
@@ -179,16 +198,19 @@ public class MacroMap extends ScrollView {
           mFile.createNewFile();
           downloadJson(mUrl, mFile);
         }
-        mHandler.post(new Runnable() {
-          @Override
-          public void run() {
-            if (mFloorid != null) {
-              setJson(mMallid, mFloorid, mFile);
-            } else {
-              setJson(mMallid, mFile);
-            }
-          }
-        });
+        Message obtainMessage = mHandler.obtainMessage();
+        obtainMessage.obj = new A(mFile, mFloorid, mMallid);
+        mHandler.sendMessage(obtainMessage);
+        // mHandler.post(new Runnable() {
+        // @Override
+        // public void run() {
+        // if (mFloorid != null) {
+        // setJson(mMallid, mFloorid, mFile);
+        // } else {
+        // setJson(mMallid, mFile);
+        // }
+        // }
+        // });
       } catch (Throwable e) {
         logd(e);
       }
@@ -233,7 +255,22 @@ public class MacroMap extends ScrollView {
   private int mFrameBorderSize = 5;
   private int mFrameFilledColor = Color.LTGRAY;
 
-  Handler mHandler = new Handler();
+  private String mMallid;
+  private String mFloorid;
+
+  private Handler mHandler = new Handler() {
+
+    @Override
+    public void handleMessage(Message msg) {
+      int what = msg.what;
+      File file = (File) msg.obj;
+      if (what == 0) {
+        loadMapJson(file);
+      } else {
+        loadFloorJson(file);
+      }
+    };
+  };
   boolean mHasMoved = false;
   boolean mIsMove = false;
   boolean mIsScale = false;
@@ -283,6 +320,8 @@ public class MacroMap extends ScrollView {
   Typeface mTypeface = Typeface.createFromAsset(getContext().getAssets(), "PalmapPublic.ttf");
 
   private PointMessage mPoint;
+
+  private DownLoad downLoad;
 
   public MacroMap(Context context) {
     super(context);
@@ -364,6 +403,18 @@ public class MacroMap extends ScrollView {
   public void hidePosition() {
     mShopPosition.setVisibility(INVISIBLE);
     mShopPosition.mShow = false;
+  }
+
+  public void loadMap(final String mapId, String mapName) {
+    if (mMall != null) {
+      return;
+    }
+    mMall = new Map();
+    mMall.setId(mapId);
+    mMall.setName(mapName);
+    DrawMap.mMapName = mapName;
+    DrawMap.delegate = this;
+    loadMapFile(mapId);
   }
 
   @Override
@@ -460,34 +511,6 @@ public class MacroMap extends ScrollView {
     mFilledColors.put(type, color);
   }
 
-  public void setFloor(String id) {
-    if (mMall == null || id == null) {
-      return;
-    }
-    for (int i = 0; i < mFloorsAdapter.getCount(); i++) {
-      String floorid = mFloorsAdapter.getItem(i).getId();
-      if (floorid.equals(id)) {
-        mSpinner.setSelection(i);
-        break;
-      }
-    }
-    logd("id=" + id);
-    Floor floor = mMall.getFloors().get(id);
-    if (floor == null) {
-      return;
-    }
-    String from = getFloorid();
-    if (floor.getData() == null) {
-      setJson(mMall.getId(), id);
-    }
-    mMall.setCurFloor(id);
-    if (!id.equals(from)) {
-      if (mOnMapFloorChangedListener != null) {
-        mOnMapFloorChangedListener.OnMapFloorChanged(from, id);
-      }
-    }
-  }
-
   // int mLocationX = 0;
   // int mLocationY = 0;
   //
@@ -501,6 +524,43 @@ public class MacroMap extends ScrollView {
   // mLocationY = xy[1];
   // }
 
+  // public void setFloor(String id) {
+  // if (mMall == null || id == null) {
+  // return;
+  // }
+  // for (int i = 0; i < mFloorsAdapter.getCount(); i++) {
+  // String floorid = mFloorsAdapter.getItem(i).getId();
+  // if (floorid.equals(id)) {
+  // mSpinner.setSelection(i);
+  // break;
+  // }
+  // }
+  // logd("id=" + id);
+  // Floor floor = mMall.getFloors().get(id);
+  // if (floor == null) {
+  // return;
+  // }
+  // String from = getFloorid();
+  // setJson(mMall.getId(), id);
+  // if (floor.getData() == null) {
+  // }
+  // mMall.setCurFloor(id);
+  // if (!id.equals(from)) {
+  // if (mOnMapFloorChangedListener != null) {
+  // mOnMapFloorChangedListener.OnMapFloorChanged(from, id);
+  // }
+  // }
+  // }
+
+  public void setFloor(String floorId) {
+    mMall.setCurFloor(floorId);
+    Floor floor = mMall.getCurFloor();
+    if (floor.getData() != null) {
+      return;
+    }
+    loadFloorFile(floor.getId());
+  }
+
   public void setFloor(String id, String name, int index) {
     if (mMall == null || id == null) {
       return;
@@ -508,7 +568,7 @@ public class MacroMap extends ScrollView {
     mMall.addFloor(id, name, index);
   }
 
-  public int setMall(String id) {
+  public int setMall(final String id) {
     if (id == null) {
       return -1;
     }
@@ -522,10 +582,29 @@ public class MacroMap extends ScrollView {
       // setJson(id);
     }
     if (mMall.getData() == null) {
-      setJson(id);
+      post(new Runnable() {
+
+        @Override
+        public void run() {
+          setJson(id);
+        }
+      });
     }
     return 0;
   }
+
+  // public void setNavigation(JSONArray json) {
+  // if (mMall != null) {
+  // mMall.setNavigation(json);
+  // if (json != null) {
+  // JSONObject obj = json.optJSONObject(0);
+  // if (obj != null) {
+  // String floorid = obj.optString("floor_id");
+  // setFloor(floorid);
+  // }
+  // }
+  // }
+  // }
 
   public int setMall(String id, String name) {
     DrawMap.mMapName = name;
@@ -550,19 +629,6 @@ public class MacroMap extends ScrollView {
     }
     return 0;
   }
-
-  // public void setNavigation(JSONArray json) {
-  // if (mMall != null) {
-  // mMall.setNavigation(json);
-  // if (json != null) {
-  // JSONObject obj = json.optJSONObject(0);
-  // if (obj != null) {
-  // String floorid = obj.optString("floor_id");
-  // setFloor(floorid);
-  // }
-  // }
-  // }
-  // }
 
   public void setOffset(float x, float y) {
     addOffset(x, y);
@@ -717,8 +783,10 @@ public class MacroMap extends ScrollView {
   int setJson(String mallid) {
     // setJson(mallid, "6");
     // String url = "http://10.0.0.10/mall/" + mallid + "/floors";
-    String url = "http://apitest.palmap.cn/mall/" + mallid + "/floors";
-    new Thread(new DownloadJson(mallid, url)).start();
+    // String url = "http://apitest.palmap.cn/mall/" + mallid + "/floors";
+    // new Thread(new DownloadJson(mallid, url)).start();
+    mMallid = mallid;
+    new DownLoad(mHandler).execute(DownLoad.getURLbyMall(mallid));
     return 0;
   }
 
@@ -730,8 +798,14 @@ public class MacroMap extends ScrollView {
       input.read(buf);
       input.close();
       String json = EncodingUtils.getString(buf, "UTF-8");
-      JSONArray obj = new JSONArray(json);
-      setJson(obj);
+      final JSONArray obj = new JSONArray(json);
+      mHandler.post(new Runnable() {
+
+        @Override
+        public void run() {
+          setJson(obj);
+        }
+      });
       logd("file.length()=" + file.length());
       return 0;
     } catch (Exception e) {
@@ -741,8 +815,11 @@ public class MacroMap extends ScrollView {
   }
 
   int setJson(String mallid, String floorid) {
-    String url = "http://apitest.palmap.cn/mall/" + mallid + "/floor/" + floorid;
-    new Thread(new DownloadJson(mallid, floorid, url)).start();
+    // String url = "http://apitest.palmap.cn/mall/" + mallid + "/floor/" + floorid;
+    // new Thread(new DownloadJson(mallid, floorid, url)).start();
+    mMallid = mallid;
+    mFloorid = floorid;
+    new DownLoad(mHandler).execute(DownLoad.getURLbyFloor(mallid, floorid));
     return 0;
   }
 
@@ -760,7 +837,13 @@ public class MacroMap extends ScrollView {
       mall.getCurFloor().setData(new com.macrowen.macromap.draw.data.JSONObject(obj));
       if (mall == mMall) {
         mall.reDraw();
-        addScale(1);
+        mHandler.post(new Runnable() {
+
+          @Override
+          public void run() {
+            MacroMap.this.mMall.scale(1);
+          }
+        });
         // addOffset(0, 0);
         // invalidate();
         logd("file.length()=" + file.length());
@@ -770,6 +853,32 @@ public class MacroMap extends ScrollView {
       e.printStackTrace();
       return -1;
     }
+  }
+
+  private void addFloor() {
+    JSONArray jsonArray = mMall.getData().getData();
+    for (int i = 0; i < jsonArray.length(); i++) {
+      JSONObject json = jsonArray.optJSONObject(i);
+      String id = json.optString("id");
+      String name = json.optString("name");
+      int index = json.optInt("index");
+      Floor floor = new Floor(id, name, index);
+      mMall.addFloor(floor);
+    }
+    setFloor("18");
+  }
+
+  private byte[] getByte(File file) {
+    try {
+      FileInputStream input = new FileInputStream(file);
+      byte[] buf = new byte[input.available()];
+      input.read(buf);
+      input.close();
+      return buf;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   private void init(AttributeSet attrs, int defStyle) {
@@ -795,6 +904,7 @@ public class MacroMap extends ScrollView {
     publicServiceIcons.put("27055", "{"); // 问讯处
 
     DrawMap.mTypeface = mTypeface;
+    downLoad = new DownLoad(mHandler);
 
     mSpinner = new Spinner(getContext());
     mSpinner.setPrompt("Floors:");
@@ -873,5 +983,73 @@ public class MacroMap extends ScrollView {
     mAnnotationTextColor = a.getColor(R.styleable.MacroMap_annotationTextColor, mAnnotationTextColor);
     mAnnotationTextHighlightColor = a.getColor(R.styleable.MacroMap_annotationTextHighlightColor, mAnnotationTextHighlightColor);
     a.recycle();
+  }
+
+  private File laodFileByURL(String url) {
+    try {
+      File file = Environment.getExternalStorageDirectory();
+      file = new File(file, "/Palmap/MacroMap/" + Base64.encodeToString(url.getBytes(), Base64.NO_WRAP));
+      if (file.length() < 4) {
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        downLoad.execute(url);
+        return null;
+      }
+      return file;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  private void loadFloorFile(String floorId) {
+    final File file = laodFileByURL(DownLoad.getURLbyFloor(mMall.getId(), floorId));
+    if (file == null) {
+      return;
+    }
+    mHandler.post(new Runnable() {
+
+      @Override
+      public void run() {
+        loadFloorJson(file);
+      }
+    });
+  }
+
+  private void loadFloorJson(File file) {
+    try {
+      String json = EncodingUtils.getString(getByte(file), "UTF-8");
+      JSONObject obj = new JSONObject(json);
+      mMall.getCurFloor().setData(new com.macrowen.macromap.draw.data.JSONObject(obj));
+      mMall.scale(1);
+      mMall.reDraw();
+      // dataReady = true;
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void loadMapFile(String mapId) {
+    final File file = laodFileByURL(DownLoad.getURLbyMall(mapId));
+    if (file == null) {
+      return;
+    }
+    mHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        loadMapJson(file);
+      }
+    });
+  }
+
+  private void loadMapJson(File file) {
+    try {
+      String json = EncodingUtils.getString(getByte(file), "UTF-8");
+      JSONArray obj = new JSONArray(json);
+      mMall.setData(new com.macrowen.macromap.draw.data.JSONArray(obj));
+      addFloor();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
   }
 }

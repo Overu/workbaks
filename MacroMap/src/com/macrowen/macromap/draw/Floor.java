@@ -103,20 +103,20 @@ public class Floor extends DrawLayer<JSONObject> {
     this.drawFloor(c);
     canvas.drawBitmap(floorLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
 
-    // shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
-    // shopCanvas = new Canvas(shopLayer);
-    // shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
-    //
-    // textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
-    // textCanvas = new Canvas(textLayer);
-    // textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    shopCanvas = new Canvas(shopLayer);
+    shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+
+    textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    textCanvas = new Canvas(textLayer);
+    textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
 
     for (Entry<PointF, Shop> entry : mShops.entrySet()) {
       Shop value = entry.getValue();
       if (mDrawType == DrawType.Draw) {
         value.mDrawType = DrawType.Draw;
       }
-      // drawLayer(value);
+      drawLayer(value);
     }
 
     for (Entry<PointF, PublicService> entry : mPublicServices.entrySet()) {
@@ -124,11 +124,11 @@ public class Floor extends DrawLayer<JSONObject> {
       if (mDrawType == DrawType.Draw) {
         value.mDrawType = DrawType.Draw;
       }
-      // drawLayer(value);
+      drawLayer(value);
     }
 
-    // canvas.drawBitmap(shopLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
-    // canvas.drawBitmap(textLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
+    canvas.drawBitmap(shopLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
+    canvas.drawBitmap(textLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
   }
 
   @Override

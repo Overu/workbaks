@@ -26,14 +26,14 @@ public class DrawMap<T> {
   public static Typeface mTypeface;
   public static String mMapName;
   public static View delegate;
+  public static Bitmap mainLayer;
+  public static Bitmap floorLayer;
+  public static Bitmap shopLayer;
+  public static Bitmap textLayer;
 
   protected static Paint mPaintBlock = new Paint();
   protected static Paint mPaintLine = new Paint();
   protected static Paint mPaintText = new Paint();
-  protected static Bitmap mainLayer;
-  protected static Bitmap floorLayer;
-  protected static Bitmap shopLayer;
-  protected static Bitmap textLayer;
 
   protected String mId;
   protected String mName;

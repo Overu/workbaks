@@ -72,7 +72,6 @@ public class Map extends DrawMap<JSONArray> {
       // mFloor.onDraw(cc);
       // mFloor.mScale = scale;
       // mFloor.mDrawType = DrawType.Draw;
-      mainLayer = null;
       mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       final Canvas c = new Canvas(mainLayer);
       c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);

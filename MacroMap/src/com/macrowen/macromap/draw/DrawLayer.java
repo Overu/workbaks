@@ -372,12 +372,8 @@ public class DrawLayer<T> extends DrawMap<T> {
           size = h * 0.9f;
         }
         if (size < mMiniumSize) {
-          // if (mHighlight) {
-          // size = mMiniumSize;
-          // } else {
           mDrawTextSize = 0;
           return;
-          // }
         }
       } else {
         path = new Path(mTextPath);
@@ -390,12 +386,8 @@ public class DrawLayer<T> extends DrawMap<T> {
         size = (float) Math.sqrt(size * mTextWidth * scale / width / 20) * 20;
         if (size < mMiniumSize) {
           // logd("size=" + size);
-          // if (mHighlight) {
-          // size = mMiniumSize;
-          // } else {
           mDrawTextSize = 0;
           return;
-          // }
         }
       }
       mDrawTextSize = size;
