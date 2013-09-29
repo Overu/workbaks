@@ -5,6 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import android.widget.RelativeLayout;
+
+import android.view.View;
+
 import android.graphics.Typeface;
 
 import android.view.MotionEvent;
@@ -50,7 +54,12 @@ public class MacroMap extends ScrollView {
   private float mLastX;
   private float mLastY;
 
+  private ShopPosition mShopPosition;
+  private RelativeLayout mRelativeLayout = new RelativeLayout(getContext());
+
   Typeface mTypeface = Typeface.createFromAsset(getContext().getAssets(), "PalmapPublic.ttf");
+
+  private PointMessage mPoint;
 
   public MacroMap(Context context) {
     super(context);
@@ -65,6 +74,11 @@ public class MacroMap extends ScrollView {
   public MacroMap(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     init(attrs, defStyle);
+  }
+
+  public void hidePosition() {
+    mShopPosition.setVisibility(INVISIBLE);
+    mShopPosition.mShow = false;
   }
 
   public void loadMap(final String mapId, String mapName) {
@@ -93,12 +107,16 @@ public class MacroMap extends ScrollView {
       } else if (!mIsMove) {
 
       } else if (!mHasMoved && event.getAction() == MotionEvent.ACTION_UP) {
-
+        mPoint = mMap.getPointMessage(ex - getLeft(), ey - getTop());
+        if (mPoint != null) {
+          this.showPosition(ex - getLeft(), ey - getTop());
+        }
       } else if ((Math.abs(ex - mLastX) + Math.abs(ey - mLastY) > 10)
           && (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_UP)) {
+        this.hidePosition();
         mHasMoved = true;
         // mMap.reDraw(event.getAction() == MotionEvent.ACTION_UP);
-        mMap.getCurFloor().addOffset(ex - mLastX, ey - mLastY);
+        mMap.translate(ex - mLastX, ey - mLastY);
         mLastX = ex;
         mLastY = ey;
       } else if (mHasMoved && event.getAction() == MotionEvent.ACTION_UP) {
@@ -119,17 +137,16 @@ public class MacroMap extends ScrollView {
         mLastY = (event.getY(1) + event.getY(0)) / 2;// - mLocationY;
       } else if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_POINTER_UP) {
         mMap.reDraw(event.getAction() == MotionEvent.ACTION_POINTER_UP);
-        // mShopPosition.setVisibility(INVISIBLE);
-        // mShopPosition.mShow = false;
+        hidePosition();
         // mRedraw = false;
         float x = event.getX(1) - event.getX(0);
         float y = event.getY(1) - event.getY(0);
         float r = (float) Math.sqrt(x * x + y * y);
-        mMap.getCurFloor().addScale(r / mLastScale);
+        mMap.scale(r / mLastScale);
         x = (event.getX(1) + event.getX(0)) / 2;// - mLocationX;
         y = (event.getY(1) + event.getY(0)) / 2;// - mLocationY;
-        mMap.getCurFloor().addOffset(x - ((mLastX - getLeft() - getWidth() / 2) * r / mLastScale + getLeft() + getWidth() / 2),
-            y - ((mLastY - getTop() - getHeight() / 2) * r / mLastScale + getTop() + getHeight() / 2));
+        mMap.translate(x - ((mLastX - getLeft() - getWidth() / 2) * r / mLastScale + getLeft() + getWidth() / 2), y
+            - ((mLastY - getTop() - getHeight() / 2) * r / mLastScale + getTop() + getHeight() / 2));
         mLastX = x;
         mLastY = y;
         mLastScale = r;
@@ -149,6 +166,19 @@ public class MacroMap extends ScrollView {
       return;
     }
     loadFloorFile(floor.getId());
+  }
+
+  public void showPosition(float x, float y) {
+    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mShopPosition.getLayoutParams();
+    params.leftMargin = (int) x - mShopPosition.getWidth() / 2;
+    params.topMargin = (int) y - mShopPosition.getHeight();
+    params.width = LayoutParams.WRAP_CONTENT;
+    params.height = LayoutParams.WRAP_CONTENT;
+    mShopPosition.setShop(mPoint);
+    // mShopPosition.setText(mShop.mDisplay);
+    mShopPosition.setLayoutParams(params);
+    mShopPosition.mShow = true;
+    mShopPosition.setVisibility(VISIBLE);
   }
 
   @Override
@@ -209,6 +239,16 @@ public class MacroMap extends ScrollView {
 
     DrawMap.mTypeface = mTypeface;
     downLoad = new DownLoad(mHandler);
+
+    setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+    addView(mRelativeLayout);
+
+    mShopPosition = new ShopPosition(getContext(), attrs, defStyle);
+    mShopPosition.setVisibility(INVISIBLE);
+    android.widget.RelativeLayout.LayoutParams params =
+        new android.widget.RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    mRelativeLayout.addView(mShopPosition, params);
   }
 
   private File laodFileByURL(String url) {
@@ -247,7 +287,7 @@ public class MacroMap extends ScrollView {
       String json = EncodingUtils.getString(getByte(file), "UTF-8");
       JSONObject obj = new JSONObject(json);
       mMap.getCurFloor().setData(new com.macrowen.macromap.draw.data.JSONObject(obj));
-      mMap.getCurFloor().addScale(1);
+      mMap.scale(1);
       mMap.reDraw();
       // dataReady = true;
     } catch (JSONException e) {

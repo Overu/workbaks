@@ -65,12 +65,12 @@ public class DrawLayer<T> extends DrawMap<T> {
       region.setPath(path, region);
       region.op(rect, region, Op.INTERSECT);
       if (region.isEmpty()) {
-        mRegion = null;
+        mBlockRegion = null;
         mDrawType = DrawType.NoDraw;
         return;
       }
-      mRegion = region;
-      path = mRegion.getBoundaryPath();
+      mBlockRegion = region;
+      path = mBlockRegion.getBoundaryPath();
       path.close();
       mDrawPath = path;
     }
@@ -86,7 +86,7 @@ public class DrawLayer<T> extends DrawMap<T> {
       return;
     }
     if (mDrawType == DrawType.Draw) {
-      if (mRegion == null) {
+      if (mBlockRegion == null) {
         return;
       }
     }
@@ -288,7 +288,7 @@ public class DrawLayer<T> extends DrawMap<T> {
     paint.setTypeface(Typeface.DEFAULT);
     if (mDrawType == DrawType.Draw) {
       mDrawType = DrawType.ReDraw;
-      Region region = new Region(mRegion);
+      Region region = new Region(mBlockRegion);
       Rect rect = region.getBounds();
       if (!region.contains(rect.centerX(), rect.centerY())) {
         Rect r = new Rect(rect);
@@ -352,7 +352,7 @@ public class DrawLayer<T> extends DrawMap<T> {
         r = rg.getBounds();
         // logd("" + rect + r);
         rect = r;
-        region = rg;
+        region = mTextRegion;
         w = (rect.width() > rect.height() * 0.8) ? rect.width() : rect.height();
         width = paint.measureText(mDisplay);
         if (width > w) {

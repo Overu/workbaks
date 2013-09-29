@@ -49,7 +49,8 @@ public class DrawMap<T> {
   public Path mTextPath;
   public Path mDrawPath;
   public Path mDrawTextPath;
-  public Region mRegion;
+  public Region mBlockRegion;
+  public Region mTextRegion;
   public PointF mStart;
   public RectF mRect;
   public RectF mBorder = null;
@@ -115,6 +116,10 @@ public class DrawMap<T> {
     PointF point = new PointF((float) x, (float) y);
     // point.offset(mOffset.x, mOffset.y);
     return point;
+  }
+
+  public PointMessage getPointMessage(float x, float y) {
+    return null;
   }
 
   public String getType() {

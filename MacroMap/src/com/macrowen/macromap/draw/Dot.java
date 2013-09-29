@@ -58,8 +58,8 @@ public class Dot extends DrawLayer<JSONArray> {
       }
       mDrawTextSize = size;
       mDrawTextPoint = new PointF(x, y);
-      mRegion = new Region();
-      mRegion.set((int) (mDrawTextPoint.x - size / 2), (int) (mDrawTextPoint.y - size / 2), (int) (mDrawTextPoint.x + size / 2),
+      mBlockRegion = new Region();
+      mBlockRegion.set((int) (mDrawTextPoint.x - size / 2), (int) (mDrawTextPoint.y - size / 2), (int) (mDrawTextPoint.x + size / 2),
           (int) (mDrawTextPoint.y + size / 2));
     }
     Paint paint = mPaintText;

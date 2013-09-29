@@ -55,6 +55,44 @@ public class Floor extends DrawLayer<JSONObject> {
   }
 
   @Override
+  public PointMessage getPointMessage(float x, float y) {
+    DrawMap<?> unit = null;
+    PointMessage pointMessage = null;
+    if (unit == null) {
+      for (Entry<PointF, PublicService> entry : mPublicServices.entrySet()) {
+        PublicService u = entry.getValue();
+        if (u.mBlockRegion != null && u.mBlockRegion.contains((int) x, (int) y)) {
+          unit = u;
+          break;
+        }
+      }
+    }
+    if (unit == null) {
+      for (Entry<PointF, Shop> entry : mShops.entrySet()) {
+        Shop u = entry.getValue();
+        if (u.mBlockRegion != null && u.mBlockRegion.contains((int) x, (int) y)) {
+          unit = u;
+          break;
+        }
+      }
+    }
+    if (unit != null && unit.mBlockRegion != null && !(unit.mDisplay.equals("") || unit.mDisplay.equalsIgnoreCase("null"))) {
+      PointF p = unit.mTextCenter;
+      if (p == null) {
+        p = unit.mStart;
+      }
+      p = new PointF(p.x, p.y);
+      p.offset(mOffset.x, mOffset.y);
+      pointMessage = new PointMessage();
+      pointMessage.setId(unit.mId);
+      pointMessage.setName(unit.mDisplay);
+      pointMessage.setType(unit.mType);
+      return pointMessage;
+    }
+    return pointMessage;
+  }
+
+  @Override
   public void onDraw(Canvas canvas) {
     Paint paint = new Paint();
     paint.setColor(Color.WHITE);
@@ -65,20 +103,20 @@ public class Floor extends DrawLayer<JSONObject> {
     this.drawFloor(c);
     canvas.drawBitmap(floorLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
 
-    shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
-    shopCanvas = new Canvas(shopLayer);
-    shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
-
-    textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
-    textCanvas = new Canvas(textLayer);
-    textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    // shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    // shopCanvas = new Canvas(shopLayer);
+    // shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    //
+    // textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    // textCanvas = new Canvas(textLayer);
+    // textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
 
     for (Entry<PointF, Shop> entry : mShops.entrySet()) {
       Shop value = entry.getValue();
       if (mDrawType == DrawType.Draw) {
         value.mDrawType = DrawType.Draw;
       }
-      drawLayer(value);
+      // drawLayer(value);
     }
 
     for (Entry<PointF, PublicService> entry : mPublicServices.entrySet()) {
@@ -86,11 +124,11 @@ public class Floor extends DrawLayer<JSONObject> {
       if (mDrawType == DrawType.Draw) {
         value.mDrawType = DrawType.Draw;
       }
-      drawLayer(value);
+      // drawLayer(value);
     }
 
-    canvas.drawBitmap(shopLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
-    canvas.drawBitmap(textLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
+    // canvas.drawBitmap(shopLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
+    // canvas.drawBitmap(textLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
   }
 
   @Override
@@ -145,7 +183,7 @@ public class Floor extends DrawLayer<JSONObject> {
 
   @Override
   public String toString() {
-    return mMapName + " —— " + getName();
+    return DrawLayer.mMapName + " —— " + getName();
   }
 
   private void drawFloor(Canvas canvas) {

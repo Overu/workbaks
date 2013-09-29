@@ -48,6 +48,11 @@ public class Map extends DrawMap<JSONArray> {
   }
 
   @Override
+  public PointMessage getPointMessage(float x, float y) {
+    return mCurFloor.getPointMessage(x, y);
+  }
+
+  @Override
   public void onDraw(final Canvas canvas) {
     final Floor mFloor = this.getCurFloor();
     if (mFloor == null) {
@@ -61,12 +66,13 @@ public class Map extends DrawMap<JSONArray> {
       Canvas cc = new Canvas(mBmp);
       cc.drawPaint(paint);
       cc.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
-      float scale = mFloor.mScale;
-      mFloor.mDrawType = DrawType.Draw;
-      mFloor.mScale = scale / 2;
+      // float scale = mFloor.mScale;
+      // mFloor.mDrawType = DrawType.Draw;
+      // mFloor.mScale = scale / 2;
       // mFloor.onDraw(cc);
-      mFloor.mScale = scale;
-      mFloor.mDrawType = DrawType.Draw;
+      // mFloor.mScale = scale;
+      // mFloor.mDrawType = DrawType.Draw;
+      mainLayer = null;
       mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       final Canvas c = new Canvas(mainLayer);
       c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
@@ -104,7 +110,20 @@ public class Map extends DrawMap<JSONArray> {
     }
   }
 
-  public void setCurFloor(String id) {
+  public void scale(float scale) {
+    mCurFloor.addScale(scale);
+  }
+
+  public int setCurFloor(String id) {
     mCurFloor = getFloors().get(id);
+    if (mCurFloor.getData() == null) {
+      return -1;
+    }
+    return 0;
+  }
+
+  public void translate(float x, float y) {
+    mCurFloor.addOffset(x, y);
+
   }
 }
