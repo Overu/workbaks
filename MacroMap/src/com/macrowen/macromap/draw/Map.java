@@ -17,12 +17,11 @@ import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 
 @SuppressLint({ "DrawAllocation", "WrongCall" })
-public class Map extends DrawMap {
+public class Map extends DrawMap<JSONArray> {
 
   private HashMap<String, Floor> floors;
 
   private Floor mCurFloor;
-  private JSONArray mJson;
 
   // private Bitmap mMapBitmap;
   private Bitmap mBmp;
@@ -48,8 +47,9 @@ public class Map extends DrawMap {
     return floors;
   }
 
-  public JSONArray getJson() {
-    return mJson;
+  @Override
+  public PointMessage getPointMessage(float x, float y) {
+    return mCurFloor.getPointMessage(x, y);
   }
 
   @Override
@@ -66,12 +66,13 @@ public class Map extends DrawMap {
       Canvas cc = new Canvas(mBmp);
       cc.drawPaint(paint);
       cc.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
-      float scale = mFloor.mScale;
-      mFloor.mDrawType = DrawType.Draw;
-      mFloor.mScale = scale / 2;
+      // float scale = mFloor.mScale;
+      // mFloor.mDrawType = DrawType.Draw;
+      // mFloor.mScale = scale / 2;
       // mFloor.onDraw(cc);
-      mFloor.mScale = scale;
-      mFloor.mDrawType = DrawType.Draw;
+      // mFloor.mScale = scale;
+      // mFloor.mDrawType = DrawType.Draw;
+      mainLayer = null;
       mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       final Canvas c = new Canvas(mainLayer);
       c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
@@ -109,11 +110,20 @@ public class Map extends DrawMap {
     }
   }
 
-  public void setCurFloor(String id) {
-    mCurFloor = getFloors().get(id);
+  public void scale(float scale) {
+    mCurFloor.addScale(scale);
   }
 
-  public void setJson(JSONArray mJson) {
-    this.mJson = mJson;
+  public int setCurFloor(String id) {
+    mCurFloor = getFloors().get(id);
+    if (mCurFloor.getData() == null) {
+      return -1;
+    }
+    return 0;
+  }
+
+  public void translate(float x, float y) {
+    mCurFloor.addOffset(x, y);
+
   }
 }

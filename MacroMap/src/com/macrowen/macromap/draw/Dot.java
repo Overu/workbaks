@@ -9,7 +9,7 @@ import android.graphics.Paint.Align;
 
 import android.graphics.Canvas;
 
-public class Dot extends DrawLayer {
+public class Dot extends DrawLayer<JSONArray> {
 
   @Override
   public void onDrawBlock(Canvas canvas) {
@@ -58,8 +58,8 @@ public class Dot extends DrawLayer {
       }
       mDrawTextSize = size;
       mDrawTextPoint = new PointF(x, y);
-      mRegion = new Region();
-      mRegion.set((int) (mDrawTextPoint.x - size / 2), (int) (mDrawTextPoint.y - size / 2), (int) (mDrawTextPoint.x + size / 2),
+      mBlockRegion = new Region();
+      mBlockRegion.set((int) (mDrawTextPoint.x - size / 2), (int) (mDrawTextPoint.y - size / 2), (int) (mDrawTextPoint.x + size / 2),
           (int) (mDrawTextPoint.y + size / 2));
     }
     Paint paint = mPaintText;
@@ -76,11 +76,4 @@ public class Dot extends DrawLayer {
     mDisplay = jsonArray.optString(0);
     mType = jsonArray.optString(1);
   }
-
-  @Override
-  public void setJson(JSONArray json) {
-    this.mJson = json;
-    super.setJson(mJson);
-  }
-
 }

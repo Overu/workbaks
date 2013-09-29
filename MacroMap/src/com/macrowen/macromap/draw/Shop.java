@@ -6,9 +6,7 @@ import android.graphics.Canvas;
 
 import android.graphics.Color;
 
-public class Shop extends DrawLayer {
-
-  private Canvas canvas;
+public class Shop extends DrawLayer<JSONArray> {
 
   public Shop() {
     setName(mDisplay);
@@ -30,12 +28,6 @@ public class Shop extends DrawLayer {
     }
     setType(jsonArray.optString(3));
     setId(String.valueOf(jsonArray.optInt(4)));
-  }
-
-  @Override
-  public void setJson(JSONArray json) {
-    this.mJson = json;
-    super.setJson(mJson);
   }
 
 }
