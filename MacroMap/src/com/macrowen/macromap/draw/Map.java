@@ -17,12 +17,11 @@ import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 
 @SuppressLint({ "DrawAllocation", "WrongCall" })
-public class Map extends DrawMap {
+public class Map extends DrawMap<JSONArray> {
 
   private HashMap<String, Floor> floors;
 
   private Floor mCurFloor;
-  private JSONArray mJson;
 
   // private Bitmap mMapBitmap;
   private Bitmap mBmp;
@@ -46,10 +45,6 @@ public class Map extends DrawMap {
 
   public HashMap<String, Floor> getFloors() {
     return floors;
-  }
-
-  public JSONArray getJson() {
-    return mJson;
   }
 
   @Override
@@ -111,9 +106,5 @@ public class Map extends DrawMap {
 
   public void setCurFloor(String id) {
     mCurFloor = getFloors().get(id);
-  }
-
-  public void setJson(JSONArray mJson) {
-    this.mJson = mJson;
   }
 }

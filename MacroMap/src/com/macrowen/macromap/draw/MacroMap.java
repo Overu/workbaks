@@ -145,7 +145,7 @@ public class MacroMap extends ScrollView {
   public void setFloor(String floorId) {
     mMap.setCurFloor(floorId);
     Floor floor = mMap.getCurFloor();
-    if (floor.getInitJson() != null) {
+    if (floor.getData() != null) {
       return;
     }
     loadFloorFile(floor.getId());
@@ -161,7 +161,7 @@ public class MacroMap extends ScrollView {
   }
 
   private void addFloor() {
-    JSONArray jsonArray = mMap.getJson();
+    JSONArray jsonArray = mMap.getData().getData();
     for (int i = 0; i < jsonArray.length(); i++) {
       JSONObject json = jsonArray.optJSONObject(i);
       String id = json.optString("id");
@@ -246,7 +246,7 @@ public class MacroMap extends ScrollView {
     try {
       String json = EncodingUtils.getString(getByte(file), "UTF-8");
       JSONObject obj = new JSONObject(json);
-      mMap.getCurFloor().setInitJson(obj);
+      mMap.getCurFloor().setData(new com.macrowen.macromap.draw.data.JSONObject(obj));
       mMap.getCurFloor().addScale(1);
       mMap.reDraw();
       // dataReady = true;
@@ -272,7 +272,7 @@ public class MacroMap extends ScrollView {
     try {
       String json = EncodingUtils.getString(getByte(file), "UTF-8");
       JSONArray obj = new JSONArray(json);
-      mMap.setJson(obj);
+      mMap.setData(new com.macrowen.macromap.draw.data.JSONArray(obj));
       addFloor();
     } catch (JSONException e) {
       e.printStackTrace();

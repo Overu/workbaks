@@ -1,5 +1,7 @@
 package com.macrowen.macromap.draw;
 
+import com.macrowen.macromap.draw.data.JSONData;
+
 import org.json.JSONArray;
 
 import java.util.HashMap;
@@ -18,7 +20,7 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import android.view.View;
 
-public class DrawMap {
+public class DrawMap<T> {
 
   public static HashMap<String, String> mPublicServiceIcons = new HashMap<String, String>();
   public static Typeface mTypeface;
@@ -37,6 +39,7 @@ public class DrawMap {
   protected String mName;
   protected String mType;
   public String mDisplay = "";
+  private JSONData<T> mData;
 
   public DrawType mDrawType = DrawType.Draw;
 
@@ -94,6 +97,10 @@ public class DrawMap {
     return x * x + y * y;
   }
 
+  public JSONData<T> getData() {
+    return mData;
+  }
+
   public String getId() {
     return mId;
   }
@@ -138,6 +145,10 @@ public class DrawMap {
 
   public void reDraw(boolean reDraw) {
     this.mRedraw = reDraw;
+  }
+
+  public void setData(JSONData<T> mData) {
+    this.mData = mData;
   }
 
   public void setId(String mId) {

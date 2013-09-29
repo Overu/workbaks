@@ -1,5 +1,7 @@
 package com.macrowen.macromap.draw;
 
+import com.macrowen.macromap.draw.data.JSONData;
+
 import org.json.JSONArray;
 
 import android.graphics.Typeface;
@@ -19,15 +21,9 @@ import android.graphics.Region.Op;
 
 import android.graphics.Canvas;
 
-public class DrawLayer extends DrawMap {
-
-  protected JSONArray mJson;
+public class DrawLayer<T> extends DrawMap<T> {
 
   protected int mLayerIdx = 0;
-
-  public JSONArray getJon() {
-    return mJson;
-  }
 
   @Override
   public void onDraw(Canvas canvas) {
@@ -417,9 +413,12 @@ public class DrawLayer extends DrawMap {
     canvas.drawTextOnPath(mDisplay, mDrawTextPath, 0, mDrawTextSize / 2.4f, paint);
   }
 
-  public void setJson(JSONArray json) {
-    this.mJson = json;
-    callPath(mJson);
+  @Override
+  public void setData(JSONData<T> mData) {
+    super.setData(mData);
+    T data = mData.getData();
+    if (data instanceof JSONArray) {
+      callPath((JSONArray) data);
+    }
   }
-
 }
