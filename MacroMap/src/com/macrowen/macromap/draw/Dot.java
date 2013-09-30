@@ -29,7 +29,10 @@ public class Dot extends DrawLayer<JSONArray> {
     if (mDrawType == DrawType.NoDraw) {
       return;
     }
-    String text = mPublicServiceIcons.get(mType);
+    String text = null;
+    if (mPublicServiceIcons != null) {
+      text = mPublicServiceIcons.get(mType);
+    }
     // logd("mType=" + mType + ", text=" + text);
     if (text == null) {
       // logd("text=" + text);
@@ -64,7 +67,9 @@ public class Dot extends DrawLayer<JSONArray> {
     }
     Paint paint = mPaintText;
     paint.setColor(mTextColor);
-    paint.setTypeface(mTypeface);
+    if (mTypeface != null) {
+      paint.setTypeface(mTypeface);
+    }
     paint.setTextSize(mDrawTextSize);
     paint.setTextAlign(Align.CENTER);
     canvas.drawText(text, mDrawTextPoint.x, mDrawTextPoint.y + mDrawTextSize * 0.4f, paint);

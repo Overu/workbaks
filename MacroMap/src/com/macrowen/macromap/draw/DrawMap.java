@@ -22,14 +22,14 @@ import android.view.View;
 
 public class DrawMap<T> {
 
-  public static HashMap<String, String> mPublicServiceIcons = new HashMap<String, String>();
-  public static Typeface mTypeface;
-  public static String mMapName;
-  public static View delegate;
-  public static Bitmap mainLayer;
-  public static Bitmap floorLayer;
-  public static Bitmap shopLayer;
-  public static Bitmap textLayer;
+  protected static HashMap<String, String> mPublicServiceIcons;
+  protected static Typeface mTypeface;
+  protected static String mMapName;
+  protected static View delegate;
+  protected static Bitmap mainLayer;
+  protected static Bitmap floorLayer;
+  protected static Bitmap shopLayer;
+  protected static Bitmap textLayer;
 
   protected static Paint mPaintBlock = new Paint();
   protected static Paint mPaintLine = new Paint();
@@ -43,7 +43,7 @@ public class DrawMap<T> {
 
   public DrawType mDrawType = DrawType.Draw;
 
-  protected boolean mRedraw = true;
+  protected boolean mRedraw = false;
 
   public Path mPath;
   public Path mTextPath;
@@ -141,6 +141,16 @@ public class DrawMap<T> {
   }
 
   public void onInfo(JSONArray jsonArray) {
+  }
+
+  public void recycleBitmap(Bitmap bitmap) {
+    if (bitmap != null) {
+      if (!bitmap.isRecycled()) {
+        bitmap.recycle();
+        bitmap = null;
+        System.gc();
+      }
+    }
   }
 
   public void reDraw() {

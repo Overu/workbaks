@@ -2,6 +2,10 @@ package com.macrowen.macromap.draw;
 
 import java.util.HashMap;
 
+import android.graphics.Typeface;
+
+import android.view.View;
+
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -43,6 +47,20 @@ public class Map extends DrawMap<JSONArray> {
     return mCurFloor;
   }
 
+  public String getFloorid() {
+    if (mCurFloor == null) {
+      return null;
+    }
+    return mCurFloor.getId();
+  }
+
+  public String getFloorname() {
+    if (mCurFloor == null) {
+      return null;
+    }
+    return mCurFloor.getName();
+  }
+
   public HashMap<String, Floor> getFloors() {
     return floors;
   }
@@ -62,6 +80,8 @@ public class Map extends DrawMap<JSONArray> {
     if (mRedraw) {
       mRedraw = false;
       paint.setColor(Color.WHITE);
+      this.recycleBitmap(mBmp);
+      mBmp = null;
       mBmp = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       Canvas cc = new Canvas(mBmp);
       cc.drawPaint(paint);
@@ -72,6 +92,7 @@ public class Map extends DrawMap<JSONArray> {
       // mFloor.onDraw(cc);
       // mFloor.mScale = scale;
       // mFloor.mDrawType = DrawType.Draw;
+      mainLayer = null;
       mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       final Canvas c = new Canvas(mainLayer);
       c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
@@ -80,6 +101,9 @@ public class Map extends DrawMap<JSONArray> {
       mFloor.mLastScale = mFloor.mScale;
       mFloor.mLastOffset = new PointF(mFloor.mOffset.x, mFloor.mOffset.y);
     } else {
+      if (mBmp == null || mainLayer == null) {
+        return;
+      }
       {
         float lastScale = mFloor.mLastScale / 2;
         Rect rect = new Rect(0, 0, delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3);
@@ -119,6 +143,65 @@ public class Map extends DrawMap<JSONArray> {
       return -1;
     }
     return 0;
+  }
+
+  public void setDelegate(View delegate) {
+    DrawMap.delegate = delegate;
+  }
+
+  public int setFloor(String id) {
+    String from = getFloorid();
+    Floor floor = floors.get(id);
+    if (floor == null) {
+      return -1;
+    } else {
+      mCurFloor = floor;
+    }
+    if (mCurFloor.getData() == null) {
+      return -2;
+    } else {
+      // invalidate();
+    }
+    // if (!id.equals(from)) {
+    // mFloor.mPosition = null;
+    // if (mOnMapFloorChangedListener != null) {
+    // mOnMapFloorChangedListener.OnMapFloorChanged(from, id);
+    // }
+    // }
+    return 0;
+  }
+
+  public int setFloor(String id, String name, int index) {
+    if (id == null) {
+      return -1;
+    }
+    if (id.equals(getFloorid()) && mCurFloor != null) {
+      mCurFloor.setName(name);
+      mCurFloor.setIndex(index);
+    } else {
+      Floor floor = floors.get(id);
+      if (floor == null) {
+        floor = new Floor(id, name, index);
+        floors.put(id, floor);
+      } else {
+        floor.setName(name);
+        floor.setIndex(index);
+      }
+      mCurFloor = floor;
+    }
+    return 0;
+  }
+
+  public void setMapName(String mapName) {
+    DrawMap.mMapName = mapName;
+  }
+
+  public void setPublicService(HashMap<String, String> publicServiceIcons) {
+    DrawMap.mPublicServiceIcons = publicServiceIcons;
+  }
+
+  public void setTypaface(Typeface typeFace) {
+    DrawMap.mTypeface = typeFace;
   }
 
   public void translate(float x, float y) {

@@ -94,8 +94,12 @@ public class Floor extends DrawLayer<JSONObject> {
 
   @Override
   public void onDraw(Canvas canvas) {
+    if (mPath == null) {
+      return;
+    }
     Paint paint = new Paint();
     paint.setColor(Color.WHITE);
+    recycleBitmap(floorLayer);
     floorLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
     Canvas c = new Canvas(floorLayer);
     c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
@@ -103,10 +107,12 @@ public class Floor extends DrawLayer<JSONObject> {
     this.drawFloor(c);
     canvas.drawBitmap(floorLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
 
+    this.recycleBitmap(shopLayer);
     shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
     shopCanvas = new Canvas(shopLayer);
     shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
 
+    this.recycleBitmap(textLayer);
     textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
     textCanvas = new Canvas(textLayer);
     textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);

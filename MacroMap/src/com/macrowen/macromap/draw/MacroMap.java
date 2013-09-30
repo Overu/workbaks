@@ -43,7 +43,7 @@ public class MacroMap extends ScrollView {
     };
   };
 
-  private DownLoad downLoad;
+  private DownLoadJson downLoad;
 
   private Map mMap;
 
@@ -107,10 +107,10 @@ public class MacroMap extends ScrollView {
       } else if (!mIsMove) {
 
       } else if (!mHasMoved && event.getAction() == MotionEvent.ACTION_UP) {
-        mPoint = mMap.getPointMessage(ex - getLeft(), ey - getTop());
-        if (mPoint != null) {
-          this.showPosition(ex - getLeft(), ey - getTop());
-        }
+        // mPoint = mMap.getPointMessage(ex - getLeft(), ey - getTop());
+        // if (mPoint != null) {
+        // this.showPosition(ex - getLeft(), ey - getTop());
+        // }
       } else if ((Math.abs(ex - mLastX) + Math.abs(ey - mLastY) > 10)
           && (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_UP)) {
         this.hidePosition();
@@ -238,7 +238,7 @@ public class MacroMap extends ScrollView {
     publicServiceIcons.put("27055", "{"); // 问讯处
 
     DrawMap.mTypeface = mTypeface;
-    downLoad = new DownLoad(mHandler);
+    downLoad = new DownLoadJson(mHandler);
 
     setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
@@ -269,7 +269,7 @@ public class MacroMap extends ScrollView {
   }
 
   private void loadFloorFile(String floorId) {
-    final File file = laodFileByURL(DownLoad.getURLbyFloor(mMap.getId(), floorId));
+    final File file = laodFileByURL(DownLoadJson.getURLbyFloor(mMap.getId(), floorId));
     if (file == null) {
       return;
     }
@@ -296,7 +296,7 @@ public class MacroMap extends ScrollView {
   }
 
   private void loadMapFile(String mapId) {
-    final File file = laodFileByURL(DownLoad.getURLbyMall(mapId));
+    final File file = laodFileByURL(DownLoadJson.getURLbyMall(mapId));
     if (file == null) {
       return;
     }
