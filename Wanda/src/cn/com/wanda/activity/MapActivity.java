@@ -1,12 +1,9 @@
 package cn.com.wanda.activity;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,6 +12,10 @@ import com.macrowen.macromap.TitlebarActivity;
 import com.macrowen.macromap.MacroMap.OnMapEventListener;
 import com.macrowen.macromap.MacroMap.OnMapEventType;
 import com.macrowen.macromap.MacroMap.OnMapFloorChangedListener;
+import com.macrowen.macromap.draw.Map;
+import com.macrowen.macromap.utils.MapService;
+import com.macrowen.macromap.utils.MapService.MapLoadStatus;
+import com.macrowen.macromap.utils.MapService.MapLoadStatusListener;
 
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -57,9 +58,42 @@ import android.widget.ImageButton;
 // }
 //
 // }
-public class MapActivity extends TitlebarActivity {
+public class MapActivity extends TitlebarActivity implements MapLoadStatusListener {
   MacroMap mMacroMap;
   Timer mPositionTimer;
+
+  MapService mapservice = MapService.getInstance();
+
+  @Override
+  public void onMapLoadStatusEvent(MapLoadStatus mapLoadStatus, Map map) {
+    switch (mapLoadStatus) {
+    case MapDataInit:
+      mapservice.setViewDelegate(mMacroMap);
+      mMacroMap.setMap(mapservice.getMap());
+      break;
+    case MapDataLoaded:
+      mapservice.setViewDelegate(mMacroMap);
+      mMacroMap.setMap(mapservice.getMap());
+      break;
+
+    default:
+      break;
+    }
+
+  }
+
+  // @Override
+  // protected void onStart()
+  // {
+  // super.onStart();
+  // }
+
+  // @Override
+  // public boolean onCreateOptionsMenu(Menu menu) {
+  // // Inflate the menu; this adds items to the action bar if it is present.
+  // getMenuInflater().inflate(R.menu.main, menu);
+  // return true;
+  // }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
@@ -96,8 +130,10 @@ public class MapActivity extends TitlebarActivity {
     // String fname = "/sdcard/MacroMap/x2.json";
     // JSONObject json = new JSONObject(fname);
     mMacroMap = (MacroMap) findViewById(R.id.macroMap1);
-    mMacroMap.setMall("3", "商场");
-    mMacroMap.setMall("3");
+    mapservice.setOnMapLoadStatusListener(this);
+    mapservice.initMapData("3", "商场");
+    // mMacroMap.setMall("3", "商场");
+    // mMacroMap.setMall("3");
     // map.
     // map.setFloor("2", "Floor 2");
     // map.setJson("1", "2", new
@@ -179,30 +215,17 @@ public class MapActivity extends TitlebarActivity {
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        mMacroMap.zoomin();
+        mapservice.zoomin();
       }
     });
     button = (ImageButton) findViewById(R.id.button_zoomout);
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        mMacroMap.zoomout();
+        mapservice.zoomout();
       }
     });
   }
-
-  // @Override
-  // protected void onStart()
-  // {
-  // super.onStart();
-  // }
-
-  // @Override
-  // public boolean onCreateOptionsMenu(Menu menu) {
-  // // Inflate the menu; this adds items to the action bar if it is present.
-  // getMenuInflater().inflate(R.menu.main, menu);
-  // return true;
-  // }
 
   @Override
   protected void onNewIntent(Intent intent) {
@@ -221,7 +244,7 @@ public class MapActivity extends TitlebarActivity {
       } else {
         String floorid = bundle.getString("floorid");
         String Shopid = bundle.getString("shopid");
-        mMacroMap.setFloor(floorid);
+        mapservice.setFloor(floorid);
       }
     }
   }

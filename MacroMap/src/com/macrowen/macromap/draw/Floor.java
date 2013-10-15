@@ -4,6 +4,7 @@ import com.macrowen.macromap.draw.data.JSONData;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -40,7 +41,7 @@ public class Floor extends DrawLayer<JSONObject> {
 
   @SuppressLint("WrongCall")
   public void drawLayer(DrawLayer draw) {
-    this.support(draw);
+    // this.support(draw);
     draw.onDraw(shopCanvas);
     draw.onDraw(textCanvas);
     draw.onDraw(textCanvas);
@@ -94,6 +95,35 @@ public class Floor extends DrawLayer<JSONObject> {
 
   @Override
   public void onDraw(Canvas canvas) {
+    if (mPath == null) {
+      return;
+    }
+    Paint paint = new Paint();
+    paint.setColor(Color.WHITE);
+    canvas.drawPaint(paint);
+    this.drawFloor(canvas);
+
+    for (Entry<PointF, Shop> entry : mShops.entrySet()) {
+      Shop value = entry.getValue();
+      if (mDrawType == DrawType.Draw) {
+        value.mDrawType = DrawType.Draw;
+      }
+      value.onDrawBlock(canvas);
+    }
+
+    for (Entry<PointF, Shop> entry : mShops.entrySet()) {
+      Shop value = entry.getValue();
+      value.onDrawLine(canvas);
+    }
+
+    for (Entry<PointF, Shop> entry : mShops.entrySet()) {
+      Shop value = entry.getValue();
+      value.onDrawText(canvas);
+    }
+
+  }
+
+  public void onDrawbak(Canvas canvas) {
     if (mPath == null) {
       return;
     }

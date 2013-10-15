@@ -86,20 +86,20 @@ public class Map extends DrawMap<JSONArray> {
       Canvas cc = new Canvas(mBmp);
       cc.drawPaint(paint);
       cc.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
-      // float scale = mFloor.mScale;
-      // mFloor.mDrawType = DrawType.Draw;
-      // mFloor.mScale = scale / 2;
-      // mFloor.onDraw(cc);
-      // mFloor.mScale = scale;
-      // mFloor.mDrawType = DrawType.Draw;
+      float scale = mScale;
+      mFloor.mDrawType = DrawType.Draw;
+      mScale = scale / 2;
+      mFloor.onDraw(cc);
+      mScale = scale;
+      mFloor.mDrawType = DrawType.Draw;
       mainLayer = null;
       mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
       final Canvas c = new Canvas(mainLayer);
       c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
       mFloor.onDraw(c);
       canvas.drawBitmap(mainLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
-      mFloor.mLastScale = mFloor.mScale;
-      mFloor.mLastOffset = new PointF(mFloor.mOffset.x, mFloor.mOffset.y);
+      mFloor.mLastScale = mScale;
+      mFloor.mLastOffset = new PointF(mOffset.x, mOffset.y);
     } else {
       if (mBmp == null || mainLayer == null) {
         return;
@@ -108,27 +108,26 @@ public class Map extends DrawMap<JSONArray> {
         float lastScale = mFloor.mLastScale / 2;
         Rect rect = new Rect(0, 0, delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3);
         float x =
-            (mFloor.mOffset.x - mFloor.mLastOffset.x) * mFloor.mScale - delegate.getWidth() / 2 * (mFloor.mScale - lastScale) / lastScale
-                - delegate.getWidth() / 3 * mFloor.mScale / lastScale;
+            (mOffset.x - mFloor.mLastOffset.x) * mScale - delegate.getWidth() / 2 * (mScale - lastScale) / lastScale - delegate.getWidth()
+                / 3 * mScale / lastScale;
         float y =
-            (mFloor.mOffset.y - mFloor.mLastOffset.y) * mFloor.mScale - delegate.getHeight() / 2 * (mFloor.mScale - lastScale) / lastScale
-                - delegate.getHeight() / 3 * mFloor.mScale / lastScale;
+            (mOffset.y - mFloor.mLastOffset.y) * mScale - delegate.getHeight() / 2 * (mScale - lastScale) / lastScale
+                - delegate.getHeight() / 3 * mScale / lastScale;
         RectF rectf =
-            new RectF(x, y, x + delegate.getWidth() * 5 / 3 * mFloor.mScale / lastScale, y + delegate.getHeight() * 5 / 3 * mFloor.mScale
-                / lastScale);
+            new RectF(x, y, x + delegate.getWidth() * 5 / 3 * mScale / lastScale, y + delegate.getHeight() * 5 / 3 * mScale / lastScale);
         canvas.drawBitmap(mBmp, rect, rectf, paint);
       }
       float w = 5;
       Rect rect = new Rect((int) w, (int) w, delegate.getWidth() * 5 / 3 - (int) w, delegate.getHeight() * 5 / 3 - (int) w);
       float x =
-          (mFloor.mOffset.x - mFloor.mLastOffset.x) * mFloor.mScale - delegate.getWidth() / 2 * (mFloor.mScale - mFloor.mLastScale)
-              / mFloor.mLastScale - delegate.getWidth() / 3 * mFloor.mScale / mFloor.mLastScale + w * mFloor.mScale;
+          (mOffset.x - mFloor.mLastOffset.x) * mScale - delegate.getWidth() / 2 * (mScale - mFloor.mLastScale) / mFloor.mLastScale
+              - delegate.getWidth() / 3 * mScale / mFloor.mLastScale + w * mScale;
       float y =
-          (mFloor.mOffset.y - mFloor.mLastOffset.y) * mFloor.mScale - delegate.getHeight() / 2 * (mFloor.mScale - mFloor.mLastScale)
-              / mFloor.mLastScale - delegate.getHeight() / 3 * mFloor.mScale / mFloor.mLastScale + w * mFloor.mScale;
+          (mOffset.y - mFloor.mLastOffset.y) * mScale - delegate.getHeight() / 2 * (mScale - mFloor.mLastScale) / mFloor.mLastScale
+              - delegate.getHeight() / 3 * mScale / mFloor.mLastScale + w * mScale;
       RectF rectf =
-          new RectF(x, y, x + delegate.getWidth() * 5 / 3 * mFloor.mScale / mFloor.mLastScale - 2 * w * mFloor.mScale, y
-              + delegate.getHeight() * 5 / 3 * mFloor.mScale / mFloor.mLastScale - 2 * w * mFloor.mScale);
+          new RectF(x, y, x + delegate.getWidth() * 5 / 3 * mScale / mFloor.mLastScale - 2 * w * mScale, y + delegate.getHeight() * 5 / 3
+              * mScale / mFloor.mLastScale - 2 * w * mScale);
       canvas.drawBitmap(mainLayer, rect, rectf, paint);
     }
   }
@@ -160,7 +159,9 @@ public class Map extends DrawMap<JSONArray> {
     if (mCurFloor.getData() == null) {
       return -2;
     } else {
-      // invalidate();
+      // if (delegate != null) {
+      // delegateRefush();
+      // }
     }
     // if (!id.equals(from)) {
     // mFloor.mPosition = null;

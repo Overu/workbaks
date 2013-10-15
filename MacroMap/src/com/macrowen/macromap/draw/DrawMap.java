@@ -25,7 +25,7 @@ public class DrawMap<T> {
   protected static HashMap<String, String> mPublicServiceIcons;
   protected static Typeface mTypeface;
   protected static String mMapName;
-  protected static View delegate;
+  public static View delegate;
   protected static Bitmap mainLayer;
   protected static Bitmap floorLayer;
   protected static Bitmap shopLayer;
@@ -34,6 +34,8 @@ public class DrawMap<T> {
   protected static Paint mPaintBlock = new Paint();
   protected static Paint mPaintLine = new Paint();
   protected static Paint mPaintText = new Paint();
+  public static PointF mOffset = new PointF(0, 0);
+  public static float mScale = 0.01f;
 
   protected String mId;
   protected String mName;
@@ -53,13 +55,11 @@ public class DrawMap<T> {
   public PointF mStart;
   public RectF mRect;
   public RectF mBorder = null;
-  public PointF mOffset = new PointF(0, 0);
 
   public PointF mDrawTextPoint;
 
   public float mTextWidth;
   public PointF mTextCenter;
-  public float mScale = 0.01f;
   public int mTextColor = Color.BLACK;
   public float mDrawTextSize;
   int mMiniumSize = 16;
@@ -194,10 +194,10 @@ public class DrawMap<T> {
     return c;
   }
 
-  protected void support(DrawMap drawMap) {
-    drawMap.mOffset = this.mOffset;
-    drawMap.mScale = this.mScale;
-  }
+  // protected void support(DrawMap drawMap) {
+  // drawMap.mOffset = this.mOffset;
+  // drawMap.mScale = this.mScale;
+  // }
 
   private void setOffset(float x, float y) {
     if (mBorder == null) {
