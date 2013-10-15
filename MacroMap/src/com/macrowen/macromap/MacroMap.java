@@ -2129,6 +2129,7 @@ public class MacroMap extends ScrollView {
     logd("mOrientation=" + mOrientation + ", newConfig.orientation=" + newConfig.orientation);
     if (mOrientation != newConfig.orientation) {
       mOrientation = newConfig.orientation;
+
       mMall.reDraw();
       addScale(1);
     }
