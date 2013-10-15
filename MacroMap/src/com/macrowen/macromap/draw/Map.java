@@ -42,6 +42,14 @@ public class Map extends DrawMap<JSONArray> {
     Floor floor = new Floor(id, name, index);
     getFloors().put(id, floor);
   }
+  
+  public void position(float x, float y) {
+    if (mCurFloor == null) {
+      return;
+    }
+    mCurFloor.setPosition(x, y);
+    mCurFloor.setOffset(-x + delegate.getWidth() / 2, -y + delegate.getHeight() / 2);
+  }
 
   public Floor getCurFloor() {
     return mCurFloor;
@@ -130,6 +138,23 @@ public class Map extends DrawMap<JSONArray> {
               * mScale / mFloor.mLastScale - 2 * w * mScale);
       canvas.drawBitmap(mainLayer, rect, rectf, paint);
     }
+  }
+  
+  public void parseMapData(final Canvas canvas) {
+    final Floor mFloor = this.getCurFloor();
+    if (mFloor == null) {
+      return;
+    }
+    Paint paint = new Paint();
+    mainLayer = null;
+    mainLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    final Canvas c = new Canvas(mainLayer);
+    c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    mFloor.onDraw(c);
+    if (canvas != null) {
+      canvas.drawBitmap(mainLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
+    }
+    this.recycleBitmap(mainLayer);
   }
 
   public void scale(float scale) {

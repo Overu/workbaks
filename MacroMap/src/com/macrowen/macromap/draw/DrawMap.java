@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import java.util.HashMap;
 
 import android.graphics.Bitmap.Config;
+import android.graphics.Paint.Style;
 
 import android.graphics.Typeface;
 
@@ -57,6 +58,7 @@ public class DrawMap<T> {
   public RectF mBorder = null;
 
   public PointF mDrawTextPoint;
+  public PointF mPosition;
 
   public float mTextWidth;
   public PointF mTextCenter;
@@ -156,6 +158,9 @@ public class DrawMap<T> {
   public void reDraw() {
     this.mRedraw = true;
   }
+  
+  public void onDrawPosition(Canvas canvas) {
+  }
 
   public void reDraw(boolean reDraw) {
     this.mRedraw = reDraw;
@@ -199,7 +204,7 @@ public class DrawMap<T> {
   // drawMap.mScale = this.mScale;
   // }
 
-  private void setOffset(float x, float y) {
+  protected void setOffset(float x, float y) {
     if (mBorder == null) {
       return;
     }
@@ -231,8 +236,11 @@ public class DrawMap<T> {
     this.delegateRefush();
     // setPath();
   }
+  
+  public void setPosition(float x, float y) {
+  }
 
-  private void setScale(float scale) {
+  protected void setScale(float scale) {
     if (mBorder == null) {
       return;
     }

@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import android.view.View;
 
+import android.graphics.PointF;
 import android.graphics.Typeface;
 
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Environment;
@@ -27,6 +29,7 @@ import android.util.AttributeSet;
 import android.util.Base64;
 import android.widget.ScrollView;
 
+@SuppressLint("WrongCall")
 public class MacroMap extends ScrollView {
 
   private Handler mHandler = new Handler() {
@@ -180,6 +183,7 @@ public class MacroMap extends ScrollView {
     mShopPosition.mShow = true;
     mShopPosition.setVisibility(VISIBLE);
   }
+  
 
   @Override
   protected void onDraw(Canvas canvas) {

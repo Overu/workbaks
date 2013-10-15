@@ -46,6 +46,11 @@ public class Floor extends DrawLayer<JSONObject> {
     draw.onDraw(textCanvas);
     draw.onDraw(textCanvas);
   }
+  
+  @Override
+  public void setPosition(float x, float y) {
+    mPosition = new PointF(x, y);
+  }
 
   public String getAlias() {
     return mAlias;
@@ -119,6 +124,10 @@ public class Floor extends DrawLayer<JSONObject> {
     for (Entry<PointF, Shop> entry : mShops.entrySet()) {
       Shop value = entry.getValue();
       value.onDrawText(canvas);
+    }
+    
+    if (mPosition != null) {
+      onDrawPosition(canvas);
     }
 
   }

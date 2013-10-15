@@ -58,7 +58,8 @@ import android.widget.ImageButton;
 // }
 //
 // }
-public class MapActivity extends TitlebarActivity implements MapLoadStatusListener {
+public class MapActivity extends TitlebarActivity implements
+    MapLoadStatusListener {
   MacroMap mMacroMap;
   Timer mPositionTimer;
 
@@ -167,48 +168,61 @@ public class MapActivity extends TitlebarActivity implements MapLoadStatusListen
 
       @Override
       public void onClick(View v) {
-        if (mPositionTimer == null) {
-          try {
-            /*
-             * File file = Environment.getExternalStorageDirectory(); file = new File(file, "/Palmap/location_server"); FileInputStream
-             * input = new FileInputStream(file); byte[] buf = new byte[input.available()]; input.read(buf); input.close(); String host =
-             * EncodingUtils.getString(buf, "UTF-8");
-             */
-            WifiManager wifi = (WifiManager) getSystemService(getBaseContext().WIFI_SERVICE);
-            final String mac = wifi.getConnectionInfo().getMacAddress();
-            mPositionTimer = new Timer();
-            mPositionTimer.schedule(new TimerTask() {
-              private Random rand = new Random();
-
-              @Override
-              public void run() {
-                final String mUrl = "http://10.1.16.93:8080/wanda2/pos?mac=" + mac + "&rand=" + rand.nextLong();
-
-                downloadJson(mUrl, new Runnable() {
-                  @Override
-                  public void run() {
-                    String floorid = "18";
-                    float x = 15202;
-                    float y = 7447;
-                    JSONObject json = getJson(mUrl);
-                    logd(json.toString());
-                    if (json != null) {
-                      floorid = json.optString("floor_id");
-                      x = (float) json.optDouble("x");
-                      y = (float) json.optDouble("y");
-                    }
-                    // mMacroMap.setPosition(floorid, x, y);
-                  }
-                });
-              }
-            }, 0, 1000 * 2);
-          } catch (Throwable e) {
-            logd(e);
-          }
-        } else {
-          mPositionTimer.cancel();
-          mPositionTimer = null;
+        if (mapservice.getMap() == null) {
+          return;
         }
+        String floorid = "18";
+        float x = 15202;
+        float y = 7447;
+        mMacroMap.setFloor(floorid);
+        mapservice.setPosition(floorid, x, y);
+        // if (mPositionTimer == null) {
+        // try {
+        // /*
+        // * File file = Environment.getExternalStorageDirectory(); file = new
+        // File(file, "/Palmap/location_server"); FileInputStream
+        // * input = new FileInputStream(file); byte[] buf = new
+        // byte[input.available()]; input.read(buf); input.close(); String host
+        // =
+        // * EncodingUtils.getString(buf, "UTF-8");
+        // */
+        // WifiManager wifi = (WifiManager)
+        // getSystemService(getBaseContext().WIFI_SERVICE);
+        // final String mac = wifi.getConnectionInfo().getMacAddress();
+        // mPositionTimer = new Timer();
+        // mPositionTimer.schedule(new TimerTask() {
+        // private Random rand = new Random();
+        //
+        // @Override
+        // public void run() {
+        // final String mUrl = "http://10.1.16.93:8080/wanda2/pos?mac=" + mac +
+        // "&rand=" + rand.nextLong();
+        //
+        // downloadJson(mUrl, new Runnable() {
+        // @Override
+        // public void run() {
+        // String floorid = "18";
+        // float x = 15202;
+        // float y = 7447;
+        // JSONObject json = getJson(mUrl);
+        // logd(json.toString());
+        // if (json != null) {
+        // floorid = json.optString("floor_id");
+        // x = (float) json.optDouble("x");
+        // y = (float) json.optDouble("y");
+        // }
+        // // mMacroMap.setPosition(floorid, x, y);
+        // }
+        // });
+        // }
+        // }, 0, 1000 * 2);
+        // } catch (Throwable e) {
+        // logd(e);
+        // }
+        // } else {
+        // mPositionTimer.cancel();
+        // mPositionTimer = null;
+        // }
       }
     });
     button = (ImageButton) findViewById(R.id.button_zoomin);
@@ -225,6 +239,12 @@ public class MapActivity extends TitlebarActivity implements MapLoadStatusListen
         mapservice.zoomout();
       }
     });
+  }
+  
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    mapservice.flrushView();
   }
 
   @Override

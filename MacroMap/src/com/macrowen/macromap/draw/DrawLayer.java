@@ -44,6 +44,28 @@ public class DrawLayer<T> extends DrawMap<T> {
       break;
     }
   }
+  
+  @Override
+  public void onDrawPosition(Canvas canvas) {
+    float x = mPosition.x + mOffset.x;
+    float y = mPosition.y + mOffset.y;
+    x = x * mScale + delegate.getWidth() / 2 * (1 - mScale);
+    y = y * mScale + delegate.getHeight() / 2 * (1 - mScale);
+    if (x < -delegate.getWidth() / 3 || x > delegate.getWidth() * 4 / 3 || y < -delegate.getHeight() / 3 || y > delegate.getHeight() * 4 / 3) {
+      return;
+    }
+    Paint paint = mPaintText;
+    paint.setColor(0xAA8888FF);
+    // paint.setAlpha(0xFF);
+    canvas.drawCircle(x, y, 50, paint);
+    // paint.setAlpha(0x80);
+    paint.setColor(0xEE002266);
+    canvas.drawCircle(x, y, 5, paint);
+    paint.setStrokeWidth(2);
+    paint.setColor(0xDD006688);
+    paint.setStyle(Style.STROKE);
+    canvas.drawCircle(x, y, 50, paint);
+  }
 
   @Override
   public void onDrawBlock(Canvas canvas) {
