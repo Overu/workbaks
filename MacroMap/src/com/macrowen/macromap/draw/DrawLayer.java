@@ -127,19 +127,22 @@ public class DrawLayer<T> extends DrawMap<T> {
         }
         float rotation = (float) json.optDouble(3);
         if (rotation != 0) {
+          continue;
         }
         PointF center = getPoint(json.optJSONArray(4));
         float startAngle = -(float) json.optDouble(5);
         float sweepAngle = -(float) json.optDouble(6);
-        RectF oval = new RectF(center.x - rx, center.y - ry, center.x + rx, center.y + ry);
+        RectF oval = new RectF(center.x - rx, center.y - ry, center.x
+            + rx, center.y + ry);
         linecount++;
         if (linecount > 0) {// && linecount < 6) {
-          point =
-              new PointF((float) (center.x + rx * Math.cos(startAngle + sweepAngle)), (float) (center.y + ry
-                  * Math.sin(startAngle + sweepAngle)));
+          point = new PointF((float) (center.x + rx
+              * Math.cos(startAngle + sweepAngle)),
+              (float) (center.y + ry * Math.sin(startAngle + sweepAngle)));
           points[linecount] = point;
           if (linecount > 1) {
-            if (threepointsoneline(points[linecount], points[linecount - 1], points[linecount - 2])) {
+            if (threepointsoneline(points[linecount],
+                points[linecount - 1], points[linecount - 2])) {
               points[linecount - 1] = points[linecount];
               linecount--;
             }
@@ -154,6 +157,7 @@ public class DrawLayer<T> extends DrawMap<T> {
         }
         startAngle = (float) (startAngle * 180 / Math.PI);
         sweepAngle = (float) (sweepAngle * 180 / Math.PI);
+        // mPath.addOval(oval, Direction.CCW);
         mPath.arcTo(oval, startAngle, sweepAngle / 2);
         mPath.arcTo(oval, startAngle + sweepAngle / 2, sweepAngle / 2);
       } else if (t.equals("L")) {
@@ -163,9 +167,11 @@ public class DrawLayer<T> extends DrawMap<T> {
         if (linecount > 0) {// && linecount < 6) {
           points[linecount] = point;
           if (linecount > 1) {
-            if (threepointsoneline(points[linecount], points[linecount - 1], points[linecount - 2])) {
+            if (threepointsoneline(points[linecount],
+                points[linecount - 1], points[linecount - 2])) {
               points[linecount - 1] = points[linecount];
               linecount--;
+              // logd("linecount=" + linecount);
             }
           }
           if (linecount > 0) {
@@ -178,6 +184,7 @@ public class DrawLayer<T> extends DrawMap<T> {
         }
       }
     }
+    // logd("linecount=" + linecount);
     if (linecount == 6) {
       if (threepointsoneline(points[0], points[1], points[5])) {
         points[0] = points[5];
@@ -192,6 +199,8 @@ public class DrawLayer<T> extends DrawMap<T> {
     }
     if (linecount == 4) {
       mTextPath = new Path();
+      // logd("" + points[0] + points[1] + points[2] +
+      // points[3] + points[4]);
       float x1, x2, y1, y2;
       if (distance(points[0], points[1]) < distance(points[1], points[2])) {
         x1 = (points[0].x + points[1].x) / 2;
@@ -211,8 +220,12 @@ public class DrawLayer<T> extends DrawMap<T> {
         mTextPath.moveTo(x2, y2);
         mTextPath.lineTo(x1, y1);
       }
-      mTextWidth = (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    } else if (index > 0 && (!(mDisplay == null || mDisplay.trim().equals("") || mDisplay.equalsIgnoreCase("null")))) {
+      mTextWidth = (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2)
+          * (y1 - y2));
+    } else if (index > 0
+        && (!(mDisplay == null || mDisplay.trim().equals("") || mDisplay
+            .equalsIgnoreCase("null")))) {
+      // logd("mDisplay=" + mDisplay);
       Path path = new Path();
       float x1, x2, y1, y2;
       x1 = points[index].x;
@@ -232,11 +245,15 @@ public class DrawLayer<T> extends DrawMap<T> {
       RectF rf = new RectF();
       Rect rect = new Rect();
       path.computeBounds(rf, false);
+      // logd("rectf=" + rf + ", x1=" + x1 + ", y1=" + y1 +
+      // ", x2=" + x2 + ", y2=" + y2);
       rf.round(rect);
       Region rg = new Region(rect);
       rg.setPath(path, rg);
       path.close();
       mp.computeBounds(rf, false);
+      // logd("rectf=" + rf + ", x1=" + x1 + ", y1=" + y1 +
+      // ", x2=" + x2 + ", y2=" + y2);
       rf.round(rect);
       Region region = new Region(rect);
       region.setPath(mp, region);
@@ -249,15 +266,20 @@ public class DrawLayer<T> extends DrawMap<T> {
         dy = 1;
       }
       Path p = new Path();
-      p.moveTo(rect.centerX() - (x2 - x1) / 10, rect.centerY() - (y2 - y1) / 10);
-      p.lineTo(rect.centerX() + (x2 - x1) / 10, rect.centerY() + (y2 - y1) / 10);
-      p.lineTo(rect.centerX() + (x2 - x1) / 10 + dx, rect.centerY() + (y2 - y1) / 10 + dy);
-      p.lineTo(rect.centerX() - (x2 - x1) / 10 + dx, rect.centerY() - (y2 - y1) / 10 + dy);
+      p.moveTo(rect.centerX() - (x2 - x1) / 10, rect.centerY()
+          - (y2 - y1) / 10);
+      p.lineTo(rect.centerX() + (x2 - x1) / 10, rect.centerY()
+          + (y2 - y1) / 10);
+      p.lineTo(rect.centerX() + (x2 - x1) / 10 + dx, rect.centerY()
+          + (y2 - y1) / 10 + dy);
+      p.lineTo(rect.centerX() - (x2 - x1) / 10 + dx, rect.centerY()
+          - (y2 - y1) / 10 + dy);
       rg = new Region(rect);
       rg.setPath(p, region);
       p.close();
       rg.op(region, rg, Op.INTERSECT);
       rect = rg.getBounds();
+      // mTextPath = rg.getBoundaryPath();
       boolean k = (x2 - x1) * (y2 - y1) < 0;
       mTextPath = new Path();
       mTextPath.moveTo(rect.left, k ? rect.bottom : rect.top);
@@ -265,9 +287,11 @@ public class DrawLayer<T> extends DrawMap<T> {
       matrix.setScale(10, 10);
       mTextPath.transform(matrix);
       // rect = rg.getBounds();
-      mTextWidth = 10 * (float) Math.sqrt(rect.width() * rect.width() + rect.height() * rect.height());
+      mTextWidth = 10 * (float) Math.sqrt(rect.width() * rect.width()
+          + rect.height() * rect.height());
       mTextPath = null;
     }
+    // mRegion = new Region();
     mRect = new RectF();
     mPath.computeBounds(mRect, true);
     if (mTextWidth < 0.01) {
