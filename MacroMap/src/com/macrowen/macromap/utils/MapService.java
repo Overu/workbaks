@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.graphics.Canvas;
+
 import android.view.View;
 
 import android.os.Handler;
@@ -53,23 +55,27 @@ public class MapService {
     public void run() {
       try {
         mFile = Environment.getExternalStorageDirectory();
-        mFile = new File(mFile, "/Palmap/MacroMap/"
-            + Base64.encodeToString(mUrl.getBytes(), Base64.NO_WRAP));
+        mFile = new File(mFile, "/Palmap/MacroMap/" + Base64.encodeToString(mUrl.getBytes(), Base64.NO_WRAP));
         if (mFile.length() < 4) {
           mFile.getParentFile().mkdirs();
           mFile.createNewFile();
           downloadJson(mUrl, mFile);
         }
-        mHandler.post(new Runnable() {
-          @Override
-          public void run() {
-            if (mFloorid != null) {
-              setFloorData(mMallid, mFloorid, mFile);
-            } else {
-              setMapJson(mMallid, mFile);
-            }
-          }
-        });
+        if (mFloorid != null) {
+          setFloorData(mMallid, mFloorid, mFile);
+        } else {
+          setMapJson(mMallid, mFile);
+        }
+        // mHandler.post(new Runnable() {
+        // @Override
+        // public void run() {
+        // if (mFloorid != null) {
+        // setFloorData(mMallid, mFloorid, mFile);
+        // } else {
+        // setMapJson(mMallid, mFile);
+        // }
+        // }
+        // });
       } catch (Throwable e) {
         e.printStackTrace();
       }
@@ -88,8 +94,8 @@ public class MapService {
   private Map mMap;
   private Handler mHandler = new Handler();
   private MapLoadStatusListener mMapLoadStatusListener;
-
-  private boolean isInit = true;
+  protected final Object mLock = new Object();
+  private Floor mLockValue;
 
   private MapService() {
   }
@@ -110,11 +116,12 @@ public class MapService {
 
   public void destory() {
     mMap = null;
+    mLockValue = null;
     System.gc();
   }
-  
+
   public void flrushView() {
-    mMap.delegate = null;
+    mMap.setDelegate(null);
   }
 
   public Floor getCurFloor() {
@@ -138,25 +145,38 @@ public class MapService {
       loadMapData(mapId);
     }
     if (mMap.getCurFloor() != null) {
-      mMapLoadStatusListener.onMapLoadStatusEvent(MapLoadStatus.MapDataLoaded,
-          mMap);
+      mMapLoadStatusListener.onMapLoadStatusEvent(MapLoadStatus.MapDataLoaded, mMap);
     }
+  }
+
+  public void parseMapData(final Canvas canvas) {
+    mMap.parseMapData(canvas);
   }
 
   public void reDraw() {
     mMap.reDraw();
   }
 
+  public void renderData() {
+    mMap.parseMapData(null);
+  }
+
+  public void reStory() {
+
+  }
+
+  public void setDelegateMeasure(int width, int height) {
+    mMap.setDelegateMeasure(width, height);
+  }
+
   public int setFloor(String id) {
     if (mMap == null || id == null) {
       return -1;
     }
-    return mMap.setFloor(id) == -2 ? loadFloorData(mMap.getId(), id) : this
-        .completeData();
+    return mMap.setFloor(id) == -2 ? loadFloorData(mMap.getId(), id) : this.completeData();
   }
 
-  public void setOnMapLoadStatusListener(
-      MapLoadStatusListener mMapLoadStatusListener) {
+  public void setOnMapLoadStatusListener(MapLoadStatusListener mMapLoadStatusListener) {
     this.mMapLoadStatusListener = mMapLoadStatusListener;
   }
 
@@ -191,8 +211,7 @@ public class MapService {
   protected int downloadJson(String u, File file) {
     try {
       URL url = new URL(u);
-      HttpURLConnection urlConnection = (HttpURLConnection) url
-          .openConnection();
+      HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
       urlConnection.setRequestMethod("GET");
       urlConnection.setRequestProperty("Accept", "application/json");
       urlConnection.connect();
@@ -215,8 +234,7 @@ public class MapService {
   }
 
   protected int loadFloorData(String mallid, String floorid) {
-    String url = "http://apitest.palmap.cn/mall/" + mallid + "/floor/"
-        + floorid;
+    String url = "http://apitest.palmap.cn/mall/" + mallid + "/floor/" + floorid;
     new Thread(new DownloadJson(mallid, floorid, url)).start();
     return 0;
   }
@@ -251,8 +269,11 @@ public class MapService {
       input.close();
       String json = EncodingUtils.getString(buf, "UTF-8");
       JSONObject obj = new JSONObject(json);
-      getCurFloor()
-          .setData(new com.macrowen.macromap.draw.data.JSONObject(obj));
+      getCurFloor().setData(new com.macrowen.macromap.draw.data.JSONObject(obj));
+      synchronized (MapService.this.mLock) {
+        mLockValue = getCurFloor();
+        mLock.notifyAll();
+      }
       this.completeData();
       return 0;
     } catch (Exception e) {
@@ -271,6 +292,19 @@ public class MapService {
       JSONArray obj = new JSONArray(json);
       mMap.setData(new com.macrowen.macromap.draw.data.JSONArray(obj));
       setFloor(obj);
+      synchronized (mLock) {
+        if (mLockValue == null) {
+          mLock.wait();
+        }
+        mHandler.post(new Runnable() {
+          @Override
+          public void run() {
+            if (mMapLoadStatusListener != null) {
+              mMapLoadStatusListener.onMapLoadStatusEvent(MapLoadStatus.MapDataInit, mMap);
+            }
+          }
+        });
+      }
       return 0;
     } catch (Exception e) {
       e.printStackTrace();
@@ -279,12 +313,7 @@ public class MapService {
   }
 
   private int completeData() {
-    if (mMapLoadStatusListener != null && isInit) {
-      isInit = false;
-      mMapLoadStatusListener.onMapLoadStatusEvent(MapLoadStatus.MapDataInit,
-          mMap);
-    }
-    if (mMap.delegate != null) {
+    if (mMap.getDelegate() != null) {
       mHandler.post(new Runnable() {
         @Override
         public void run() {

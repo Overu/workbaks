@@ -1,5 +1,10 @@
 package cn.com.wanda.taicang.activity;
 
+import com.macrowen.macromap.draw.Map;
+import com.macrowen.macromap.utils.MapService;
+import com.macrowen.macromap.utils.MapService.MapLoadStatus;
+import com.macrowen.macromap.utils.MapService.MapLoadStatusListener;
+
 import cn.com.wanda.activity.HomeActivity;
 
 import android.os.Bundle;
@@ -11,7 +16,7 @@ import android.content.res.AssetManager;
 import android.widget.ImageView;
 
 /** 启动页面 LaunchActivity */
-public class LaunchActivity extends Activity {
+public class LaunchActivity extends Activity implements MapLoadStatusListener {
   /** 启动页面的背景图 */
   private ImageView activity_launch_layout_imageview;
   /** 跳转 */
@@ -19,11 +24,30 @@ public class LaunchActivity extends Activity {
   /** 启动页面停留时异步加载数据（1，数据从本地来，就加载数据库；2，数据从网上来就下载数据） */
   private Handler activity_launch_handler;
 
+  private MapService mMapService = MapService.getInstance();
+
+  @Override
+  public void onMapLoadStatusEvent(MapLoadStatus mapLoadStatus, Map map) {
+    if (mapLoadStatus == MapLoadStatus.MapDataInit) {
+      loadDataTime();
+    } else if (mapLoadStatus == MapLoadStatus.MapDataLoaded) {
+      loadDataTime();
+    }
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_launch);
     this.initView();
+
+    mMapService.setOnMapLoadStatusListener(this);
+    mMapService.initMapData("3", "商场");
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
   }
 
   /** 初始化控件 */
@@ -37,7 +61,7 @@ public class LaunchActivity extends Activity {
         skipActivity();
       }
     };
-    loadDataTime();
+    // loadDataTime();
   }
 
   /**

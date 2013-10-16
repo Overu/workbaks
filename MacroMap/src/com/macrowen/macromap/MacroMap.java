@@ -122,8 +122,7 @@ public class MacroMap extends ScrollView {
       if (mConfigures == null || name == null) {
         return "";
       }
-      JSONObject json = mConfigures.optJSONObject("shop").optJSONObject(
-          "category");
+      JSONObject json = mConfigures.optJSONObject("shop").optJSONObject("category");
       if (json == null) {
         return "";
       }
@@ -152,10 +151,7 @@ public class MacroMap extends ScrollView {
 
   static void logd(String log) {
     StackTraceElement ste = new Throwable().getStackTrace()[1];
-    Log.d(
-        ste.getClassName(),
-        "at " + ste.getMethodName() + "(" + ste.getFileName() + ":"
-            + ste.getLineNumber() + ")" + "  " + log);
+    Log.d(ste.getClassName(), "at " + ste.getMethodName() + "(" + ste.getFileName() + ":" + ste.getLineNumber() + ")" + "  " + log);
   }
 
   static void logd(Throwable e) {
@@ -174,8 +170,7 @@ public class MacroMap extends ScrollView {
   private int mAssistantTextColor = Color.BLACK;
   HashMap<String, Integer> mBorderColors = new HashMap<String, Integer>();
 
-  ConfigureFile mConfigure = new ConfigureFile(new File(
-      Environment.getExternalStorageDirectory(), "/Palmap/configure.json"));
+  ConfigureFile mConfigure = new ConfigureFile(new File(Environment.getExternalStorageDirectory(), "/Palmap/configure.json"));
   // private Drawable mEscalatorElevatorIcon;
   // private Drawable mEscalatorEscalatorIcon;
   // private Drawable mEscalatorStairIcon;
@@ -239,8 +234,7 @@ public class MacroMap extends ScrollView {
 
   HashMap<String, Integer> mTextColors = new HashMap<String, Integer>();
 
-  Typeface mTypeface = Typeface.createFromAsset(getContext().getAssets(),
-      "PalmapPublic.ttf");
+  Typeface mTypeface = Typeface.createFromAsset(getContext().getAssets(), "PalmapPublic.ttf");
 
   private boolean isInit = true;
 
@@ -353,8 +347,7 @@ public class MacroMap extends ScrollView {
         mLastScale = r;
         mLastX = (event.getX(1) + event.getX(0)) / 2;// - mLocationX;
         mLastY = (event.getY(1) + event.getY(0)) / 2;// - mLocationY;
-      } else if (event.getAction() == MotionEvent.ACTION_MOVE
-          || event.getAction() == MotionEvent.ACTION_POINTER_UP) {
+      } else if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_POINTER_UP) {
         mMall.reDraw(event.getAction() == MotionEvent.ACTION_POINTER_UP);
         hidePosition();
         // mRedraw = false;
@@ -364,17 +357,13 @@ public class MacroMap extends ScrollView {
         mMall.scale(r / mLastScale);
         x = (event.getX(1) + event.getX(0)) / 2;// - mLocationX;
         y = (event.getY(1) + event.getY(0)) / 2;// - mLocationY;
-        mMall.translate(x
-            - ((mLastX - getLeft() - getWidth() / 2) * r / mLastScale
-                + getLeft() + getWidth() / 2), y
-            - ((mLastY - getTop() - getHeight() / 2) * r / mLastScale
-                + getTop() + getHeight() / 2));
+        mMall.translate(x - ((mLastX - getLeft() - getWidth() / 2) * r / mLastScale + getLeft() + getWidth() / 2), y
+            - ((mLastY - getTop() - getHeight() / 2) * r / mLastScale + getTop() + getHeight() / 2));
         mLastX = x;
         mLastY = y;
         mLastScale = r;
       } else if (mIsScale
-          && (event.getAction() == MotionEvent.ACTION_POINTER_UP || (event
-              .getAction() & 0xFF) == (MotionEvent.ACTION_POINTER_UP))) {
+          && (event.getAction() == MotionEvent.ACTION_POINTER_UP || (event.getAction() & 0xFF) == (MotionEvent.ACTION_POINTER_UP))) {
         mMall.reDraw();
       }
     }
@@ -411,19 +400,18 @@ public class MacroMap extends ScrollView {
     mFilledColors.put(type, color);
   }
 
-  public void setMap(Map map) {
-    mMall = map;
-
-    if (mFloorsAdapter.getCount() == 0) {
-      mFloorsAdapter.addAll(mMall.getFloors().values());
-      mFloorsAdapter.sort(new Comparator<Floor>() {
-        @Override
-        public int compare(Floor lhs, Floor rhs) {
-          return lhs.getIndex() - rhs.getIndex();
-        }
-      });
+  public void setFloor(String id) {
+    if (mMall == null || id == null) {
+      return;
     }
-    setFloor(mMall.getFloorid());
+    for (int i = 0; i < mFloorsAdapter.getCount(); i++) {
+      String floorid = mFloorsAdapter.getItem(i).getId();
+      if (floorid.equals(id)) {
+        mSpinner.setSelection(i);
+        break;
+      }
+    }
+    // mMapService.setFloor(id);
   }
 
   // int mLocationX = 0;
@@ -438,6 +426,40 @@ public class MacroMap extends ScrollView {
   // mLocationX = xy[0];
   // mLocationY = xy[1];
   // }
+
+  public void setMap(Map map) {
+    mMall = map;
+
+    if (mFloorsAdapter.getCount() == 0) {
+      mFloorsAdapter.addAll(mMall.getFloors().values());
+      mFloorsAdapter.sort(new Comparator<Floor>() {
+        @Override
+        public int compare(Floor lhs, Floor rhs) {
+          return lhs.getIndex() - rhs.getIndex();
+        }
+      });
+    }
+    setFloor(mMall.getFloorid());
+    new Thread(new Runnable() {
+
+      @Override
+      public void run() {
+        try {
+          Thread.sleep(100);
+          mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+              mMall.reDraw();
+              mMapService.addScale(1);
+            }
+          });
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }).start();
+  }
 
   public void setNavigation(JSONArray json) {
     if (mMall != null) {
@@ -456,8 +478,7 @@ public class MacroMap extends ScrollView {
     mOnMapEventListener = onMapEventListener;
   }
 
-  public void setOnMapFloorChangedListener(
-      OnMapFloorChangedListener onMapFloorChangedListener) {
+  public void setOnMapFloorChangedListener(OnMapFloorChangedListener onMapFloorChangedListener) {
     mOnMapFloorChangedListener = onMapFloorChangedListener;
   }
 
@@ -468,8 +489,7 @@ public class MacroMap extends ScrollView {
   @Override
   protected void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    logd("mOrientation=" + mOrientation + ", newConfig.orientation="
-        + newConfig.orientation);
+    logd("mOrientation=" + mOrientation + ", newConfig.orientation=" + newConfig.orientation);
     if (mOrientation != newConfig.orientation) {
       mOrientation = newConfig.orientation;
 
@@ -492,20 +512,6 @@ public class MacroMap extends ScrollView {
     // logd("widthMeasureSpec=" + widthMeasureSpec + ", heightMeasureSpec="
     // + heightMeasureSpec);
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-  }
-
-  public void setFloor(String id) {
-    if (mMall == null || id == null) {
-      return;
-    }
-    for (int i = 0; i < mFloorsAdapter.getCount(); i++) {
-      String floorid = mFloorsAdapter.getItem(i).getId();
-      if (floorid.equals(id)) {
-        mSpinner.setSelection(i);
-        break;
-      }
-    }
-    // mMapService.setFloor(id);
   }
 
   void changeHighlight(float x, float y) {
@@ -534,16 +540,14 @@ public class MacroMap extends ScrollView {
     mPublicServiceIcons.put("27055", "{"); // 问讯处
     mSpinner = new Spinner(getContext());
     mSpinner.setPrompt("Floors:");
-    mFloorsAdapter = new ArrayAdapter<Floor>(getContext(),
-        android.R.layout.simple_spinner_item, 0, new ArrayList<Floor>());
+    mFloorsAdapter = new ArrayAdapter<Floor>(getContext(), android.R.layout.simple_spinner_item, 0, new ArrayList<Floor>());
     // (Mall.Floor[]) mMall.mFloors.values().toArray()
     mSpinner.setAdapter(mFloorsAdapter);
     mRelativeLayout.addView(mSpinner);
     addView(mRelativeLayout);
     mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
       @Override
-      public void onItemSelected(AdapterView<?> parent, View view,
-          int position, long id) {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (isInit) {
           isInit = false;
           return;
@@ -573,67 +577,38 @@ public class MacroMap extends ScrollView {
     // mRelativeLayout.addView(linear);
     mShopPosition = new ShopPosition(getContext(), attrs, defStyle);
     mShopPosition.setVisibility(INVISIBLE);
-    android.widget.RelativeLayout.LayoutParams params = new android.widget.RelativeLayout.LayoutParams(
-        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    android.widget.RelativeLayout.LayoutParams params =
+        new android.widget.RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     mRelativeLayout.addView(mShopPosition, params);
 
-    final TypedArray a = getContext().obtainStyledAttributes(attrs,
-        R.styleable.MacroMap, defStyle, 0);
+    final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.MacroMap, defStyle, 0);
 
-    mMapBackgroundColor = a.getColor(R.styleable.MacroMap_mapBackgroundColor,
-        mMapBackgroundColor);
-    mFrameBorderColor = a.getColor(R.styleable.MacroMap_frameBorderColor,
-        mFrameBorderColor);
-    mFrameFilledColor = a.getColor(R.styleable.MacroMap_frameFilledColor,
-        mFrameFilledColor);
-    mFrameBorderSize = a.getInt(R.styleable.MacroMap_frameBorderSize,
-        mFrameBorderSize);
+    mMapBackgroundColor = a.getColor(R.styleable.MacroMap_mapBackgroundColor, mMapBackgroundColor);
+    mFrameBorderColor = a.getColor(R.styleable.MacroMap_frameBorderColor, mFrameBorderColor);
+    mFrameFilledColor = a.getColor(R.styleable.MacroMap_frameFilledColor, mFrameFilledColor);
+    mFrameBorderSize = a.getInt(R.styleable.MacroMap_frameBorderSize, mFrameBorderSize);
 
-    mAssistantBorderColor = a.getColor(
-        R.styleable.MacroMap_assistantBorderColor, mAssistantBorderColor);
-    mAssistantBorderHightlightColor = a.getColor(
-        R.styleable.MacroMap_assistantBorderHighlightColor,
-        mAssistantBorderHightlightColor);
-    mAssistantFilledColor = a.getColor(
-        R.styleable.MacroMap_assistantFilledColor, mAssistantFilledColor);
-    mAssistantFilledHighlightColor = a.getColor(
-        R.styleable.MacroMap_assistantFilledHighlightColor,
-        mAssistantFilledHighlightColor);
-    mAssistantTextColor = a.getColor(R.styleable.MacroMap_assistantTextColor,
-        mAssistantTextColor);
-    mAssistantBorderSize = a.getInt(R.styleable.MacroMap_assistantBorderSize,
-        mAssistantBorderSize);
+    mAssistantBorderColor = a.getColor(R.styleable.MacroMap_assistantBorderColor, mAssistantBorderColor);
+    mAssistantBorderHightlightColor = a.getColor(R.styleable.MacroMap_assistantBorderHighlightColor, mAssistantBorderHightlightColor);
+    mAssistantFilledColor = a.getColor(R.styleable.MacroMap_assistantFilledColor, mAssistantFilledColor);
+    mAssistantFilledHighlightColor = a.getColor(R.styleable.MacroMap_assistantFilledHighlightColor, mAssistantFilledHighlightColor);
+    mAssistantTextColor = a.getColor(R.styleable.MacroMap_assistantTextColor, mAssistantTextColor);
+    mAssistantBorderSize = a.getInt(R.styleable.MacroMap_assistantBorderSize, mAssistantBorderSize);
 
-    mShopBorderColor = a.getColor(R.styleable.MacroMap_shopBorderColor,
-        mShopBorderColor);
-    mShopBorderHightlightColor = a.getColor(
-        R.styleable.MacroMap_shopBorderHighlightColor,
-        mShopBorderHightlightColor);
-    mShopFilledColor = a.getColor(R.styleable.MacroMap_shopFilledColor,
-        mShopFilledColor);
-    mShopFilledHighlightColor = a.getColor(
-        R.styleable.MacroMap_shopFilledHighlightColor,
-        mShopFilledHighlightColor);
-    mShopTextColor = a.getColor(R.styleable.MacroMap_shopTextColor,
-        mShopTextColor);
-    mShopBorderSize = a.getInt(R.styleable.MacroMap_shopBorderSize,
-        mShopBorderSize);
+    mShopBorderColor = a.getColor(R.styleable.MacroMap_shopBorderColor, mShopBorderColor);
+    mShopBorderHightlightColor = a.getColor(R.styleable.MacroMap_shopBorderHighlightColor, mShopBorderHightlightColor);
+    mShopFilledColor = a.getColor(R.styleable.MacroMap_shopFilledColor, mShopFilledColor);
+    mShopFilledHighlightColor = a.getColor(R.styleable.MacroMap_shopFilledHighlightColor, mShopFilledHighlightColor);
+    mShopTextColor = a.getColor(R.styleable.MacroMap_shopTextColor, mShopTextColor);
+    mShopBorderSize = a.getInt(R.styleable.MacroMap_shopBorderSize, mShopBorderSize);
 
-    mPublicServiceTextColor = a.getColor(
-        R.styleable.MacroMap_publicServiceTextColor, mPublicServiceTextColor);
-    mPublicServiceTextHighlightColor = a.getColor(
-        R.styleable.MacroMap_publicServiceTextHighlightColor,
-        mPublicServiceTextHighlightColor);
-    mPublicServiceAtmIcon = a
-        .getDrawable(R.styleable.MacroMap_publicServiceAtmIcon);
-    mPublicServiceToiletIcon = a
-        .getDrawable(R.styleable.MacroMap_publicServiceToiletIcon);
+    mPublicServiceTextColor = a.getColor(R.styleable.MacroMap_publicServiceTextColor, mPublicServiceTextColor);
+    mPublicServiceTextHighlightColor = a.getColor(R.styleable.MacroMap_publicServiceTextHighlightColor, mPublicServiceTextHighlightColor);
+    mPublicServiceAtmIcon = a.getDrawable(R.styleable.MacroMap_publicServiceAtmIcon);
+    mPublicServiceToiletIcon = a.getDrawable(R.styleable.MacroMap_publicServiceToiletIcon);
 
-    mEscalatorTextColor = a.getColor(R.styleable.MacroMap_escalatorTextColor,
-        mEscalatorTextColor);
-    mEscalatorTextHighlightColor = a.getColor(
-        R.styleable.MacroMap_escalatorTextHighlightColor,
-        mEscalatorTextHighlightColor);
+    mEscalatorTextColor = a.getColor(R.styleable.MacroMap_escalatorTextColor, mEscalatorTextColor);
+    mEscalatorTextHighlightColor = a.getColor(R.styleable.MacroMap_escalatorTextHighlightColor, mEscalatorTextHighlightColor);
     // mEscalatorEscalatorIcon = a
     // .getDrawable(R.styleable.MacroMap_escalatorEscalatorIcon);
     // mEscalatorElevatorIcon = a
@@ -641,11 +616,8 @@ public class MacroMap extends ScrollView {
     // mEscalatorStairIcon = a
     // .getDrawable(R.styleable.MacroMap_escalatorStairIcon);
 
-    mAnnotationTextColor = a.getColor(R.styleable.MacroMap_annotationTextColor,
-        mAnnotationTextColor);
-    mAnnotationTextHighlightColor = a.getColor(
-        R.styleable.MacroMap_annotationTextHighlightColor,
-        mAnnotationTextHighlightColor);
+    mAnnotationTextColor = a.getColor(R.styleable.MacroMap_annotationTextColor, mAnnotationTextColor);
+    mAnnotationTextHighlightColor = a.getColor(R.styleable.MacroMap_annotationTextHighlightColor, mAnnotationTextHighlightColor);
     a.recycle();
   }
 }

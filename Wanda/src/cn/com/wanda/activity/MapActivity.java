@@ -1,26 +1,19 @@
 package cn.com.wanda.activity;
 
-import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
+
+import android.content.Intent;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.macrowen.macromap.MacroMap;
 import com.macrowen.macromap.TitlebarActivity;
 import com.macrowen.macromap.MacroMap.OnMapEventListener;
 import com.macrowen.macromap.MacroMap.OnMapEventType;
 import com.macrowen.macromap.MacroMap.OnMapFloorChangedListener;
-import com.macrowen.macromap.draw.Map;
 import com.macrowen.macromap.utils.MapService;
-import com.macrowen.macromap.utils.MapService.MapLoadStatus;
-import com.macrowen.macromap.utils.MapService.MapLoadStatusListener;
 
-import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,30 +51,29 @@ import android.widget.ImageButton;
 // }
 //
 // }
-public class MapActivity extends TitlebarActivity implements
-    MapLoadStatusListener {
+public class MapActivity extends TitlebarActivity {
   MacroMap mMacroMap;
   Timer mPositionTimer;
 
-  MapService mapservice = MapService.getInstance();
+  MapService mMapService = MapService.getInstance();
 
-  @Override
-  public void onMapLoadStatusEvent(MapLoadStatus mapLoadStatus, Map map) {
-    switch (mapLoadStatus) {
-    case MapDataInit:
-      mapservice.setViewDelegate(mMacroMap);
-      mMacroMap.setMap(mapservice.getMap());
-      break;
-    case MapDataLoaded:
-      mapservice.setViewDelegate(mMacroMap);
-      mMacroMap.setMap(mapservice.getMap());
-      break;
-
-    default:
-      break;
-    }
-
-  }
+  // @Override
+  // public void onMapLoadStatusEvent(MapLoadStatus mapLoadStatus, Map map) {
+  // switch (mapLoadStatus) {
+  // case MapDataInit:
+  // mapservice.setViewDelegate(mMacroMap);
+  // mMacroMap.setMap(mapservice.getMap());
+  // break;
+  // case MapDataLoaded:
+  // mapservice.setViewDelegate(mMacroMap);
+  // mMacroMap.setMap(mapservice.getMap());
+  // break;
+  //
+  // default:
+  // break;
+  // }
+  //
+  // }
 
   // @Override
   // protected void onStart()
@@ -131,8 +123,9 @@ public class MapActivity extends TitlebarActivity implements
     // String fname = "/sdcard/MacroMap/x2.json";
     // JSONObject json = new JSONObject(fname);
     mMacroMap = (MacroMap) findViewById(R.id.macroMap1);
-    mapservice.setOnMapLoadStatusListener(this);
-    mapservice.initMapData("3", "商场");
+    mMapService.setViewDelegate(mMacroMap);
+    // mapservice.setOnMapLoadStatusListener(this);
+    // mapservice.initMapData("3", "商场");
     // mMacroMap.setMall("3", "商场");
     // mMacroMap.setMall("3");
     // map.
@@ -168,14 +161,14 @@ public class MapActivity extends TitlebarActivity implements
 
       @Override
       public void onClick(View v) {
-        if (mapservice.getMap() == null) {
+        if (mMapService.getMap() == null) {
           return;
         }
         String floorid = "18";
         float x = 15202;
         float y = 7447;
         mMacroMap.setFloor(floorid);
-        mapservice.setPosition(floorid, x, y);
+        mMapService.setPosition(floorid, x, y);
         // if (mPositionTimer == null) {
         // try {
         // /*
@@ -229,22 +222,22 @@ public class MapActivity extends TitlebarActivity implements
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        mapservice.zoomin();
+        mMapService.zoomin();
       }
     });
     button = (ImageButton) findViewById(R.id.button_zoomout);
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        mapservice.zoomout();
+        mMapService.zoomout();
       }
     });
   }
-  
+
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    mapservice.flrushView();
+    mMapService.flrushView();
   }
 
   @Override
@@ -264,8 +257,14 @@ public class MapActivity extends TitlebarActivity implements
       } else {
         String floorid = bundle.getString("floorid");
         String Shopid = bundle.getString("shopid");
-        mapservice.setFloor(floorid);
+        mMapService.setFloor(floorid);
       }
     }
+  }
+
+  @Override
+  protected void onPostCreate(Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    mMacroMap.setMap(mMapService.getMap());
   }
 }

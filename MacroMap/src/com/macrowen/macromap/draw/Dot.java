@@ -52,10 +52,9 @@ public class Dot extends DrawLayer<JSONArray> {
       }
       float x = mStart.x + mOffset.x;
       float y = mStart.y + mOffset.y;
-      x = x * mScale + delegate.getWidth() / 2 * (1 - mScale);
-      y = y * mScale + delegate.getHeight() / 2 * (1 - mScale);
-      if (x < -delegate.getWidth() / 3 || x > delegate.getWidth() * 4 / 3 || y < -delegate.getHeight() / 3
-          || y > delegate.getHeight() * 4 / 3) {
+      x = x * mScale + delegateWidth / 2 * (1 - mScale);
+      y = y * mScale + delegateHeight / 2 * (1 - mScale);
+      if (x < -delegateWidth / 3 || x > delegateWidth * 4 / 3 || y < -delegateHeight / 3 || y > delegateHeight * 4 / 3) {
         mDrawType = DrawType.NoDraw;
         return;
       }

@@ -44,28 +44,6 @@ public class DrawLayer<T> extends DrawMap<T> {
       break;
     }
   }
-  
-  @Override
-  public void onDrawPosition(Canvas canvas) {
-    float x = mPosition.x + mOffset.x;
-    float y = mPosition.y + mOffset.y;
-    x = x * mScale + delegate.getWidth() / 2 * (1 - mScale);
-    y = y * mScale + delegate.getHeight() / 2 * (1 - mScale);
-    if (x < -delegate.getWidth() / 3 || x > delegate.getWidth() * 4 / 3 || y < -delegate.getHeight() / 3 || y > delegate.getHeight() * 4 / 3) {
-      return;
-    }
-    Paint paint = mPaintText;
-    paint.setColor(0xAA8888FF);
-    // paint.setAlpha(0xFF);
-    canvas.drawCircle(x, y, 50, paint);
-    // paint.setAlpha(0x80);
-    paint.setColor(0xEE002266);
-    canvas.drawCircle(x, y, 5, paint);
-    paint.setStrokeWidth(2);
-    paint.setColor(0xDD006688);
-    paint.setStyle(Style.STROKE);
-    canvas.drawCircle(x, y, 50, paint);
-  }
 
   @Override
   public void onDrawBlock(Canvas canvas) {
@@ -78,9 +56,9 @@ public class DrawLayer<T> extends DrawMap<T> {
       matrix.setTranslate(mOffset.x, mOffset.y);
       path.transform(matrix);
       float scale = mScale;
-      matrix.setScale(scale, scale, delegate.getWidth() / 2, delegate.getHeight() / 2);
+      matrix.setScale(scale, scale, delegateWidth / 2, delegateHeight / 2);
       path.transform(matrix);
-      Rect rect = new Rect(-delegate.getWidth() / 3, -delegate.getHeight() / 3, delegate.getWidth() * 4 / 3, delegate.getHeight() * 4 / 3);
+      Rect rect = new Rect(-delegateWidth / 3, -delegateHeight / 3, delegateWidth * 4 / 3, delegateHeight * 4 / 3);
       RectF rectf = new RectF();
       path.computeBounds(rectf, false);
       Region region = new Region(rect);
@@ -298,6 +276,28 @@ public class DrawLayer<T> extends DrawMap<T> {
   }
 
   @Override
+  public void onDrawPosition(Canvas canvas) {
+    float x = mPosition.x + mOffset.x;
+    float y = mPosition.y + mOffset.y;
+    x = x * mScale + delegateWidth / 2 * (1 - mScale);
+    y = y * mScale + delegateHeight / 2 * (1 - mScale);
+    if (x < -delegateWidth / 3 || x > delegateWidth * 4 / 3 || y < -delegateHeight / 3 || y > delegateHeight * 4 / 3) {
+      return;
+    }
+    Paint paint = mPaintText;
+    paint.setColor(0xAA8888FF);
+    // paint.setAlpha(0xFF);
+    canvas.drawCircle(x, y, 50, paint);
+    // paint.setAlpha(0x80);
+    paint.setColor(0xEE002266);
+    canvas.drawCircle(x, y, 5, paint);
+    paint.setStrokeWidth(2);
+    paint.setColor(0xDD006688);
+    paint.setStyle(Style.STROKE);
+    canvas.drawCircle(x, y, 50, paint);
+  }
+
+  @Override
   public void onDrawText(Canvas canvas) {
     if (mDrawType == DrawType.NoDraw) {
       return;
@@ -403,7 +403,7 @@ public class DrawLayer<T> extends DrawMap<T> {
         matrix.setTranslate(mOffset.x, mOffset.y);
         path.transform(matrix);
         float scale = mScale;
-        matrix.setScale(scale, scale, delegate.getWidth() / 2, delegate.getHeight() / 2);
+        matrix.setScale(scale, scale, delegateWidth / 2, delegateHeight / 2);
         path.transform(matrix);
         size = (float) Math.sqrt(size * mTextWidth * scale / width / 20) * 20;
         if (size < mMiniumSize) {

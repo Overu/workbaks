@@ -29,6 +29,8 @@ public class Floor extends DrawLayer<JSONObject> {
   private Canvas shopCanvas;
   private Canvas textCanvas;
 
+  public ParseType mParseType = ParseType.Parse;
+
   public Floor(String id, String name, int index) {
     setId(id);
     setName(name);
@@ -45,11 +47,6 @@ public class Floor extends DrawLayer<JSONObject> {
     draw.onDraw(shopCanvas);
     draw.onDraw(textCanvas);
     draw.onDraw(textCanvas);
-  }
-  
-  @Override
-  public void setPosition(float x, float y) {
-    mPosition = new PointF(x, y);
   }
 
   public String getAlias() {
@@ -125,10 +122,12 @@ public class Floor extends DrawLayer<JSONObject> {
       Shop value = entry.getValue();
       value.onDrawText(canvas);
     }
-    
+
     if (mPosition != null) {
       onDrawPosition(canvas);
     }
+
+    mParseType = ParseType.NoParse;
 
   }
 
@@ -139,22 +138,22 @@ public class Floor extends DrawLayer<JSONObject> {
     Paint paint = new Paint();
     paint.setColor(Color.WHITE);
     recycleBitmap(floorLayer);
-    floorLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    floorLayer = Bitmap.createBitmap(delegateWidth * 5 / 3, delegateHeight * 5 / 3, Config.ARGB_8888);
     Canvas c = new Canvas(floorLayer);
-    c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    c.translate(delegateWidth / 3, delegateHeight / 3);
     canvas.drawPaint(paint);
     this.drawFloor(c);
-    canvas.drawBitmap(floorLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, paint);
+    canvas.drawBitmap(floorLayer, -delegateWidth / 3, -delegateHeight / 3, paint);
 
     this.recycleBitmap(shopLayer);
-    shopLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    shopLayer = Bitmap.createBitmap(delegateWidth * 5 / 3, delegateHeight * 5 / 3, Config.ARGB_8888);
     shopCanvas = new Canvas(shopLayer);
-    shopCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    shopCanvas.translate(delegateWidth / 3, delegateHeight / 3);
 
     this.recycleBitmap(textLayer);
-    textLayer = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
+    textLayer = Bitmap.createBitmap(delegateWidth * 5 / 3, delegateHeight * 5 / 3, Config.ARGB_8888);
     textCanvas = new Canvas(textLayer);
-    textCanvas.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
+    textCanvas.translate(delegateWidth / 3, delegateHeight / 3);
 
     for (Entry<PointF, Shop> entry : mShops.entrySet()) {
       Shop value = entry.getValue();
@@ -172,8 +171,8 @@ public class Floor extends DrawLayer<JSONObject> {
       drawLayer(value);
     }
 
-    canvas.drawBitmap(shopLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
-    canvas.drawBitmap(textLayer, -delegate.getWidth() / 3, -delegate.getHeight() / 3, null);
+    canvas.drawBitmap(shopLayer, -delegateWidth / 3, -delegateHeight / 3, null);
+    canvas.drawBitmap(textLayer, -delegateWidth / 3, -delegateHeight / 3, null);
   }
 
   @Override
@@ -224,6 +223,11 @@ public class Floor extends DrawLayer<JSONObject> {
 
   public void setIndex(int index) {
     this.mIndex = index;
+  }
+
+  @Override
+  public void setPosition(float x, float y) {
+    mPosition = new PointF(x, y);
   }
 
   @Override

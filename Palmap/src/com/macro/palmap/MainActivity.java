@@ -1,4 +1,4 @@
-package cn.com.wanda.activity;
+package com.macro.palmap;
 
 import java.util.Random;
 import java.util.Timer;
@@ -58,7 +58,7 @@ import android.widget.ImageButton;
 // }
 //
 // }
-public class MapActivity extends TitlebarActivity implements MapLoadStatusListener {
+public class MainActivity extends TitlebarActivity implements MapLoadStatusListener {
   MacroMap mMacroMap;
   Timer mPositionTimer;
 
@@ -126,7 +126,7 @@ public class MapActivity extends TitlebarActivity implements MapLoadStatusListen
         startActivity(intent);
       }
     });
-    setContentView(R.layout.activity_map);
+    setContentView(R.layout.activity_main);
     // String fname = "/sdcard/MacroMap/x2.json";
     // JSONObject json = new JSONObject(fname);
     mMacroMap = (MacroMap) findViewById(R.id.macroMap1);

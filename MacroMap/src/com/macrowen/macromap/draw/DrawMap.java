@@ -7,10 +7,7 @@ import org.json.JSONArray;
 import java.util.HashMap;
 
 import android.graphics.Bitmap.Config;
-import android.graphics.Paint.Style;
-
 import android.graphics.Typeface;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -26,12 +23,13 @@ public class DrawMap<T> {
   protected static HashMap<String, String> mPublicServiceIcons;
   protected static Typeface mTypeface;
   protected static String mMapName;
-  public static View delegate;
+  protected static View delegate;
+  protected static int delegateWidth;
+  protected static int delegateHeight;
   protected static Bitmap mainLayer;
   protected static Bitmap floorLayer;
   protected static Bitmap shopLayer;
   protected static Bitmap textLayer;
-
   protected static Paint mPaintBlock = new Paint();
   protected static Paint mPaintLine = new Paint();
   protected static Paint mPaintText = new Paint();
@@ -139,6 +137,9 @@ public class DrawMap<T> {
   public void onDrawPath(JSONArray jsonArray) {
   }
 
+  public void onDrawPosition(Canvas canvas) {
+  }
+
   public void onDrawText(Canvas canvas) {
   }
 
@@ -158,9 +159,6 @@ public class DrawMap<T> {
   public void reDraw() {
     this.mRedraw = true;
   }
-  
-  public void onDrawPosition(Canvas canvas) {
-  }
 
   public void reDraw(boolean reDraw) {
     this.mRedraw = reDraw;
@@ -178,6 +176,9 @@ public class DrawMap<T> {
     this.mName = mName;
   }
 
+  public void setPosition(float x, float y) {
+  }
+
   public void setType(String type) {
     this.mType = type;
   }
@@ -192,17 +193,17 @@ public class DrawMap<T> {
     return Math.abs((b + a) / (b - a)) > 5;
   }
 
-  protected Canvas genLayer(Bitmap bitmap) {
-    bitmap = Bitmap.createBitmap(delegate.getWidth() * 5 / 3, delegate.getHeight() * 5 / 3, Config.ARGB_8888);
-    Canvas c = new Canvas(bitmap);
-    c.translate(delegate.getWidth() / 3, delegate.getHeight() / 3);
-    return c;
-  }
-
   // protected void support(DrawMap drawMap) {
   // drawMap.mOffset = this.mOffset;
   // drawMap.mScale = this.mScale;
   // }
+
+  protected Canvas genLayer(Bitmap bitmap) {
+    bitmap = Bitmap.createBitmap(delegateWidth * 5 / 3, delegateHeight * 5 / 3, Config.ARGB_8888);
+    Canvas c = new Canvas(bitmap);
+    c.translate(delegateWidth / 3, delegateHeight / 3);
+    return c;
+  }
 
   protected void setOffset(float x, float y) {
     if (mBorder == null) {
@@ -211,42 +212,37 @@ public class DrawMap<T> {
     // float margin = 5 / 12f;
     // logd("mRect.width()=" + mRect.width() + ", getWidth()=" +
     // getWidth());
-    if (mBorder.width() * mScale <= delegate.getWidth()) {
-      x = -mBorder.left + (delegate.getWidth() - mBorder.width()) / 2;
+    if (mBorder.width() * mScale <= delegateWidth) {
+      x = -mBorder.left + (delegateWidth - mBorder.width()) / 2;
     } else {
       // x = Math.min(x, -mBorder.left + getWidth() / 2 - getWidth() /
       // mScale * margin);
       // x = Math.max(x, -mBorder.right + getWidth() / 2 + getWidth() /
       // mScale * margin);
-      x = Math.min(x, -mBorder.left + delegate.getWidth() / 2 - mMapMargin / mScale);
-      x = Math.max(x, -mBorder.right + delegate.getWidth() / 2 + mMapMargin / mScale);
+      x = Math.min(x, -mBorder.left + delegateWidth / 2 - mMapMargin / mScale);
+      x = Math.max(x, -mBorder.right + delegateWidth / 2 + mMapMargin / mScale);
     }
-    if (mBorder.height() * mScale <= delegate.getHeight()) {
-      y = -mBorder.top + (delegate.getHeight() - mBorder.height()) / 2;
+    if (mBorder.height() * mScale <= delegateHeight) {
+      y = -mBorder.top + (delegateHeight - mBorder.height()) / 2;
     } else {
       // y = Math.min(y, -mBorder.top + getHeight() / 2 - getHeight() /
       // mScale * margin);
       // y = Math.max(y, -mBorder.bottom + getHeight() / 2 + getHeight() /
       // mScale * margin);
-      y = Math.min(y, -mBorder.top + delegate.getHeight() / 2 - mMapMargin / mScale);
-      y = Math.max(y, -mBorder.bottom + delegate.getHeight() / 2 + mMapMargin / mScale);
+      y = Math.min(y, -mBorder.top + delegateHeight / 2 - mMapMargin / mScale);
+      y = Math.max(y, -mBorder.bottom + delegateHeight / 2 + mMapMargin / mScale);
     }
     mOffset = new PointF(x, y);
     mDrawType = DrawType.Draw;
     this.delegateRefush();
     // setPath();
   }
-  
-  public void setPosition(float x, float y) {
-  }
 
   protected void setScale(float scale) {
     if (mBorder == null) {
       return;
     }
-    scale =
-        Math.max(scale, Math.min((delegate.getWidth() - mMapMargin) / mBorder.width(), (delegate.getHeight() - mMapMargin)
-            / mBorder.height()));
+    scale = Math.max(scale, Math.min((delegateWidth - mMapMargin) / mBorder.width(), (delegateHeight - mMapMargin) / mBorder.height()));
     if (Float.isInfinite(scale) || Float.isNaN(scale)) {
       return;
     }
