@@ -1,6 +1,7 @@
 package com.macrowen.macromap.draw;
 
 import com.macrowen.macromap.R;
+import com.macrowen.macromap.MacroMap.OnMapEventType;
 
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,9 +15,13 @@ import android.widget.RelativeLayout;
 
 public class ShopPosition extends RelativeLayout {
 
-  PointMessage shop;
+  public interface OnMapEventListener {
+    public void OnMapEvent(String string, OnMapEventType type);
+  }
 
+  Shop mShop;
   public boolean mShow = false;
+  private OnMapEventListener mOnMapEventListener;
 
   public ShopPosition(Context context) {
     super(context);
@@ -33,12 +38,16 @@ public class ShopPosition extends RelativeLayout {
     init();
   }
 
-  public void setShop(PointMessage shop) {
-    this.shop = shop;
-    setText(shop.getName());
+  public void setOnMapEventListener(OnMapEventListener onMapEventListener) {
+    this.mOnMapEventListener = onMapEventListener;
   }
 
-  void setText(String display) {
+  public void setShop(Shop shop) {
+    mShop = shop;
+    setText(mShop.mDisplay);
+  }
+
+  public void setText(String display) {
     TextView text = (TextView) findViewById(R.id.shop_display);
     text.setText(display);
   }
@@ -50,18 +59,18 @@ public class ShopPosition extends RelativeLayout {
     share.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        // if (mOnMapEventListener != null && mShop != null) {
-        // mOnMapEventListener.OnMapEvent(mShop.mId, OnMapEventType.MapClickedLeft);
-        // }
+        if (mOnMapEventListener != null && mShop != null) {
+          mOnMapEventListener.OnMapEvent(mShop.getId(), OnMapEventType.MapClickedLeft);
+        }
       }
     });
     ImageButton more = (ImageButton) findViewById(R.id.shop_more);
     more.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        // if (mOnMapEventListener != null && mShop != null) {
-        // mOnMapEventListener.OnMapEvent(mShop.mId, OnMapEventType.MapClickedRight);
-        // }
+        if (mOnMapEventListener != null && mShop != null) {
+          mOnMapEventListener.OnMapEvent(mShop.getId(), OnMapEventType.MapClickedRight);
+        }
       }
     });
   }

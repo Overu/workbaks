@@ -24,6 +24,7 @@ public class DrawMap<T> {
   protected static Typeface mTypeface;
   protected static String mMapName;
   protected static View delegate;
+  protected static ShopPosition shopPosition;
   protected static int delegateWidth;
   protected static int delegateHeight;
   protected static Bitmap mainLayer;
@@ -117,7 +118,7 @@ public class DrawMap<T> {
     return point;
   }
 
-  public PointMessage getPointMessage(float x, float y) {
+  public Shop showShopPosition(float x, float y) {
     return null;
   }
 

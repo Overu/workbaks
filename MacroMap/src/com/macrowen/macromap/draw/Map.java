@@ -69,9 +69,8 @@ public class Map extends DrawMap<JSONArray> {
     return floors;
   }
 
-  @Override
-  public PointMessage getPointMessage(float x, float y) {
-    return mCurFloor.getPointMessage(x, y);
+  public ShopPosition getShopPosition() {
+    return DrawMap.shopPosition;
   }
 
   @Override
@@ -134,6 +133,9 @@ public class Map extends DrawMap<JSONArray> {
           new RectF(x, y, x + delegateWidth * 5 / 3 * mScale / mFloor.mLastScale - 2 * w * mScale, y + delegateHeight * 5 / 3 * mScale
               / mFloor.mLastScale - 2 * w * mScale);
       canvas.drawBitmap(mainLayer, rect, rectf, paint);
+      if (shopPosition != null && shopPosition.mShow) {
+        shopPosition.setVisibility(View.VISIBLE);
+      }
     }
   }
 
@@ -199,7 +201,6 @@ public class Map extends DrawMap<JSONArray> {
   }
 
   public int setFloor(String id) {
-    String from = getFloorid();
     Floor floor = floors.get(id);
     if (floor == null) {
       return -1;
@@ -251,8 +252,17 @@ public class Map extends DrawMap<JSONArray> {
     DrawMap.mPublicServiceIcons = publicServiceIcons;
   }
 
+  public void setShopPosition(ShopPosition shopPoisiton) {
+    DrawMap.shopPosition = shopPoisiton;
+  }
+
   public void setTypaface(Typeface typeFace) {
     DrawMap.mTypeface = typeFace;
+  }
+
+  @Override
+  public Shop showShopPosition(float x, float y) {
+    return mCurFloor.showShopPosition(x, y);
   }
 
   public void translate(float x, float y) {

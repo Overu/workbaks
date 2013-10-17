@@ -177,13 +177,12 @@ public class MacroMap extends ScrollView {
     params.topMargin = (int) y - mShopPosition.getHeight();
     params.width = LayoutParams.WRAP_CONTENT;
     params.height = LayoutParams.WRAP_CONTENT;
-    mShopPosition.setShop(mPoint);
+    // mShopPosition.setShop(mPoint);
     // mShopPosition.setText(mShop.mDisplay);
     mShopPosition.setLayoutParams(params);
     mShopPosition.mShow = true;
     mShopPosition.setVisibility(VISIBLE);
   }
-  
 
   @Override
   protected void onDraw(Canvas canvas) {

@@ -2,6 +2,8 @@ package com.macrowen.macromap.utils;
 
 import com.macrowen.macromap.draw.Floor;
 import com.macrowen.macromap.draw.Map;
+import com.macrowen.macromap.draw.ShopPosition;
+import com.macrowen.macromap.draw.ShopPosition.OnMapEventListener;
 
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
@@ -30,6 +32,10 @@ public class MapService {
 
   public interface MapLoadStatusListener {
     public void onMapLoadStatusEvent(MapLoadStatus mapLoadStatus, Map map);
+  }
+
+  public interface OnMapFloorChangedListener {
+    public void OnMapFloorChanged(String fromFloorid, String toFloorid);
   }
 
   class DownloadJson implements Runnable {
@@ -66,16 +72,6 @@ public class MapService {
         } else {
           setMapJson(mMallid, mFile);
         }
-        // mHandler.post(new Runnable() {
-        // @Override
-        // public void run() {
-        // if (mFloorid != null) {
-        // setFloorData(mMallid, mFloorid, mFile);
-        // } else {
-        // setMapJson(mMallid, mFile);
-        // }
-        // }
-        // });
       } catch (Throwable e) {
         e.printStackTrace();
       }
@@ -96,6 +92,8 @@ public class MapService {
   private MapLoadStatusListener mMapLoadStatusListener;
   protected final Object mLock = new Object();
   private Floor mLockValue;
+
+  private OnMapFloorChangedListener mOnMapFloorChangedListener;
 
   private MapService() {
   }
@@ -122,6 +120,8 @@ public class MapService {
 
   public void flrushView() {
     mMap.setDelegate(null);
+    mMap.setShopPosition(null);
+    mOnMapFloorChangedListener = null;
   }
 
   public Floor getCurFloor() {
@@ -131,8 +131,40 @@ public class MapService {
     return mMap.getCurFloor();
   }
 
+  public String getFloorId() {
+    if (mMap == null) {
+      return null;
+    }
+    return mMap.getFloorid();
+  }
+
+  public String getFloorname() {
+    if (mMap == null) {
+      return null;
+    }
+    return mMap.getFloorname();
+  }
+
   public Map getMap() {
     return mMap;
+  }
+
+  public String getMapId() {
+    if (mMap == null) {
+      return null;
+    }
+    return mMap.getId();
+  }
+
+  public String getMapName() {
+    if (mMap == null) {
+      return null;
+    }
+    return mMap.getName();
+  }
+
+  public ShopPosition getShopPosition() {
+    return mMap.getShopPosition();
   }
 
   public void initMapData(String mapId, String mapName) {
@@ -154,11 +186,17 @@ public class MapService {
   }
 
   public void reDraw() {
+    if (mMap == null) {
+      return;
+    }
     mMap.reDraw();
   }
 
-  public void renderData() {
-    mMap.parseMapData(null);
+  public void reDraw(boolean reDraw) {
+    if (mMap == null) {
+      return;
+    }
+    mMap.reDraw(reDraw);
   }
 
   public void reStory() {
@@ -170,10 +208,29 @@ public class MapService {
   }
 
   public int setFloor(String id) {
+    String from = mMap.getFloorid();
     if (mMap == null || id == null) {
       return -1;
     }
-    return mMap.setFloor(id) == -2 ? loadFloorData(mMap.getId(), id) : this.completeData();
+    int idx = mMap.setFloor(id) == -2 ? loadFloorData(mMap.getId(), id) : this.completeData();
+    if (!id.equals(from)) {
+      getCurFloor().mPosition = null;
+      if (mOnMapFloorChangedListener != null) {
+        mOnMapFloorChangedListener.OnMapFloorChanged(from, id);
+      }
+    }
+    return idx;
+  }
+
+  public void setOnMapEventListener(OnMapEventListener onMapEventListener) {
+    if (getShopPosition() == null) {
+      return;
+    }
+    getShopPosition().setOnMapEventListener(onMapEventListener);
+  }
+
+  public void setOnMapFloorChangedListener(OnMapFloorChangedListener onMapFloorChangedListener) {
+    mOnMapFloorChangedListener = onMapFloorChangedListener;
   }
 
   public void setOnMapLoadStatusListener(MapLoadStatusListener mMapLoadStatusListener) {
@@ -189,11 +246,19 @@ public class MapService {
     }
   }
 
+  public void setShopPosition(ShopPosition shopPosition) {
+    mMap.setShopPosition(shopPosition);
+  }
+
   public void setViewDelegate(View view) {
     if (mMap == null) {
       return;
     }
     mMap.setDelegate(view);
+  }
+
+  public void showShopPosition(float x, float y) {
+    mMap.showShopPosition(x, y);
   }
 
   public void zoomin() {
@@ -282,7 +347,7 @@ public class MapService {
     }
   }
 
-  protected int setMapJson(String mallid, File file) {
+  protected int setMapJson(String mapId, File file) {
     try {
       FileInputStream input = new FileInputStream(file);
       byte[] buf = new byte[input.available()];
